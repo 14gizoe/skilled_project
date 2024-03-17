@@ -13,7 +13,7 @@ APP_NAME=skilled_project
 JAR_NAME=$(ls $REPOSITORY | grep '.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/$JAR_NAME
 
-CURRENT_PID=$(ps -f | grep $APP_NAME)
+CURRENT_PID=$(pgrep -f APP_NAME)
 
 if [ -z $CURRENT_PID ] #2
 then
