@@ -6,7 +6,7 @@ files:
     overwrite: yes
 
 hooks:
-  AfterInstall:
+  ApplicationStart:
     - location: deploy.sh
       timeout: 120
       runas: ubuntu

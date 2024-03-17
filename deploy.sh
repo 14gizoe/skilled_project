@@ -21,15 +21,15 @@ fi
 # java가 깔려있지 않으면 java 설치
 if ! command -v java &> /dev/null
 then
-    echo "Java is not installed. Installing..."
+    echo "java가 설치되어있지않아 설치합니다."
     # Install Java (OpenJDK 11)
     sudo apt-get update
     sudo apt-get install -y openjdk-17-jdk
     # Verify Java installation
     java -version
 else
-    echo "Java is already installed."
+    echo "java는 이미 설치되어있습니다."
 fi
 
 echo "> $JAR_PATH 배포" #3
-nohup java -jar "$JAR_NAME" &
+nohup java -jar "$JAR_NAME" > $REPOSITORY/nohup.out 2>&1 &
