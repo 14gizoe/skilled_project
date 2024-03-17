@@ -4,6 +4,8 @@ name: skilled_project cicd
 
 # 아래의 브랜치에 해당 트리거가 발생하면 자동 배포
 on:
+  push:
+    branches: [ "develop" ]
   pull_request:
     branches: [ "develop", "main" ]
 
@@ -23,6 +25,19 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+
+      # yml, properties file 생성
+
+      - name: create application.properties
+        if: |
+          contains(github.ref, 'main') ||
+          contains(github.ref, 'develop')
+        run: |
+          mkdir ./src/main/resources
+          cd ./src/main/resources
+          touch ./application.properties
+          echo "${{ secrets.PROPERTIES }}" > ./application.properties
+        shell: bash
 
       # 2. project에 맞는 gradle 설정
       - name: Setup Gradle
