@@ -73,7 +73,7 @@ jobs:
         
       # 7. code deploy 설정
       - name: Code Deploy
-        run: aws deploy create-deployment --application-name spring-deploy
+        run: aws deploy create-deployment --application-name skilled_project_ec2
           --deployment-config-name CodeDeployDefault.OneAtATime
           --deployment-group-name spring-deploy-group
           --s3-location bucket=actions-cicdtest-bucket,bundleType=zip,key=skilled_project_bucket/skilled_project.zip
