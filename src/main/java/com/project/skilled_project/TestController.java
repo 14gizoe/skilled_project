@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
     @GetMapping("/test")
     public String test(){
-        return "14기조 cicd 완성이요~~ 3트";
+        return "14기조 cicd 완성이요~~ 4트";
     }
 }
