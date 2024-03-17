@@ -28,6 +28,12 @@ jobs:
 
       # yml, properties file 생성
 
+      - name: resourece 폴더 생성
+        if: |
+          contains(github.ref, 'main')
+        run: |
+          mkdir ./src/main/resources
+
       - name: create application.properties
         if: |
           contains(github.ref, 'main') ||
