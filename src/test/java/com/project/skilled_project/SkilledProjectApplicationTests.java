@@ -6,9 +6,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class SkilledProjectApplicationTests {
 
-    @Test
-    void contextLoads() {
-        System.out.println("hello");
-    }
+  @Test
+  void contextLoads() {
+    System.out.println("hello");
+  }
 
 }
