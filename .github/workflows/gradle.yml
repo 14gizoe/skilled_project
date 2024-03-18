@@ -5,9 +5,9 @@ name: skilled_project cicd
 # 아래의 브랜치에 해당 트리거가 발생하면 자동 배포
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "develop", "main" ]
+    branches: [ "main" ]
 
 # 코드가 변경되면 실행할 작업들
 jobs:
@@ -30,8 +30,7 @@ jobs:
 
       - name: create application.properties
         if: |
-          contains(github.ref, 'main') ||
-          contains(github.ref, 'develop')
+          contains(github.ref, 'main')
         run: |
           cd ./src/main/resources
           touch ./application.properties
