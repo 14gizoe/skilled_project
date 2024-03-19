@@ -6,8 +6,10 @@ import com.project.skilled_project.domain.board.dto.response.BoardDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsResponseDto;
 import com.project.skilled_project.domain.board.service.BoardService;
 import com.project.skilled_project.global.response.CommonResponse;
+import com.project.skilled_project.global.util.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,9 +28,10 @@ public class BoardController {
 
   @PostMapping("")
   public ResponseEntity<CommonResponse<Void>> createBoard(
-      @RequestBody BoardRequestDto req
+      @RequestBody BoardRequestDto req,
+      UserDetailsImpl userDetails
   ) {
-    boardService.createBoard(req);
+    boardService.createBoard(req, userDetails.getUser());
     return ResponseEntity.ok().body(
         CommonResponse.<Void>builder().build()
     );
@@ -45,11 +48,12 @@ public class BoardController {
 
   @GetMapping("/{boardId}")
   public ResponseEntity<CommonResponse<BoardDto>> getBoard(
-      @PathVariable Long boardId
+      @PathVariable Long boardId,
+      UserDetailsImpl userDetails
   ) {
     return ResponseEntity.ok().body(
         CommonResponse.<BoardDto>builder()
-            .data(boardService.getBoard(boardId))
+            .data(boardService.getBoard(boardId, userDetails.getUser()))
             .build()
     );
   }
@@ -57,9 +61,10 @@ public class BoardController {
   @PutMapping("/{boardId}")
   public ResponseEntity<CommonResponse<Void>> updateBoard(
       @PathVariable Long boardId,
-      @RequestBody BoardRequestDto req
+      @RequestBody BoardRequestDto req,
+      UserDetailsImpl userDetails
   ) {
-    boardService.updateBoard(boardId, req);
+    boardService.updateBoard(boardId, req, userDetails.getUser());
     return ResponseEntity.ok().body(
         CommonResponse.<Void>builder().build()
     );
@@ -78,9 +83,10 @@ public class BoardController {
 
   @DeleteMapping("/{boardId}")
   public ResponseEntity<CommonResponse<Void>> deleteBoard(
-      @PathVariable Long boardId
+      @PathVariable Long boardId,
+      UserDetailsImpl userDetails
   ) {
-    boardService.deleteBoard(boardId);
+    boardService.deleteBoard(boardId, userDetails.getUser());
     return ResponseEntity.ok().body(
         CommonResponse.<Void>builder().build()
     );

@@ -1,6 +1,7 @@
 package com.project.skilled_project.domain.board.entity;
 
 import com.project.skilled_project.domain.board.dto.request.BoardRequestDto;
+import com.project.skilled_project.domain.user.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,13 +29,14 @@ public class Board {
   private String color = "#FFFFFF";
 
   @Column(name = "user_id", nullable = false)
-  private Long userId = 1L;
+  private Long userId;
 
   @Column(name = "deleted_at")
   private LocalDateTime deletedAt;
 
-  public Board(BoardRequestDto req) {
+  public Board(BoardRequestDto req, User user) {
     this.title = req.getTitle();
+    this.userId = user.getId();
   }
 
   public void update(BoardRequestDto req) {

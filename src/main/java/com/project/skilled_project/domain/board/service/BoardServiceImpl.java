@@ -9,11 +9,16 @@ import com.project.skilled_project.domain.board.dto.response.BoardsResponseDto;
 import com.project.skilled_project.domain.board.dto.response.CardDto;
 import com.project.skilled_project.domain.board.dto.response.ColumnDto;
 import com.project.skilled_project.domain.board.entity.Board;
+import com.project.skilled_project.domain.board.entity.Participant;
 import com.project.skilled_project.domain.board.repository.BoardRepository;
+import com.project.skilled_project.domain.board.repository.ParticipantRepository;
+import com.project.skilled_project.domain.user.entity.User;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,11 +31,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardServiceImpl implements BoardService {
 
   private final BoardRepository boardRepository;
+  private final ParticipantRepository participantRepository;
 
   @Override
   @Transactional
-  public void createBoard(BoardRequestDto req) {
-    Board board = new Board(req);
+  public void createBoard(BoardRequestDto req, User user) {
+    Board board = new Board(req, user);
     boardRepository.save(board);
   }
 
@@ -45,7 +51,7 @@ public class BoardServiceImpl implements BoardService {
   }
 
   @Override
-  public BoardDto getBoard(Long boardId) {
+  public BoardDto getBoard(Long boardId, User user) {
     List<BoardResponseDto> boardList = boardRepository.getBoard(boardId);
 
     String title = boardList.get(0).getBoardTitle();
@@ -85,7 +91,8 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   @Transactional
-  public void updateBoard(Long boardId, BoardRequestDto req) {
+  public void updateBoard(Long boardId, BoardRequestDto req, User user) {
+    validateUser(user, boardId);
     Board board = validateBoard(boardId);
     board.update(req);
   }
@@ -93,14 +100,30 @@ public class BoardServiceImpl implements BoardService {
   @Override
   @Transactional
   public void inviteUser(Long boardId, UserInviteRequestDto req) {
-
+    Participant participant;
+    List<Long> userList = participantRepository.findAllByBoardId(boardId);
+    Set<Long> set = new HashSet<>(userList);
+    for (Long id : userList) {
+      if(!set.contains(id)){
+        participant = new Participant(boardId, id);
+        participantRepository.save(participant);
+      }
+    }
   }
 
   @Override
   @Transactional
-  public void deleteBoard(Long boardId) {
+  public void deleteBoard(Long boardId, User user) {
+    validateUser(user, boardId);
     Board board = validateBoard(boardId);
     board.softDelete();
+  }
+
+  private void validateUser(User user, Long boardId) {
+    List<Long> userList = participantRepository.findAllByBoardId(boardId);
+    if(!userList.contains(user.getId())){
+      throw new IllegalStateException("보드 권한이 있는 유저가 아닙니다.");
+    };
   }
 
   private Board validateBoard(Long boardId) {

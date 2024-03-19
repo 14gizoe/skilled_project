@@ -1,5 +1,6 @@
 package com.project.skilled_project.domain.user.service;
 
+import com.project.skilled_project.domain.user.entity.User;
 import com.project.skilled_project.domain.user.repository.UserRepository;
 import com.project.skilled_project.domain.user.repository.UserRepositoryQuery;
 import lombok.RequiredArgsConstructor;

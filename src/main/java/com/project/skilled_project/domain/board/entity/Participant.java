@@ -5,11 +5,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-public class BoardUser {
+@AllArgsConstructor
+public class Participant {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +22,10 @@ public class BoardUser {
 
   @Column(name = "user_id", nullable = false)
   private Long userId;
+
+  public Participant(Long boardId, Long userId){
+    this.boardId = boardId;
+    this.userId = userId;
+  }
+
 }
