@@ -4,7 +4,6 @@ import com.project.skilled_project.domain.user.dto.SignupRequestDto;
 import com.project.skilled_project.domain.user.dto.UserDto;
 import com.project.skilled_project.domain.user.service.UserService;
 import com.project.skilled_project.global.response.CommonResponse;
-import com.project.skilled_project.global.util.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
