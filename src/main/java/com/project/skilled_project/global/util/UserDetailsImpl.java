@@ -16,7 +16,7 @@ public class UserDetailsImpl implements UserDetails {
   }
 
   public UserDetailsImpl(String username) {
-    this.user = new User(this.getUsername(), username, this.getPassword(), null);
+    this.user = new User(username);
   }
 
   @Override
@@ -31,7 +31,7 @@ public class UserDetailsImpl implements UserDetails {
 
   @Override
   public String getUsername() {
-    return user.getEmail();
+    return user.getUsername();
   }
 
   @Override
