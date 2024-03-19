@@ -55,7 +55,7 @@ public class ColumnsController {
   }
 
   //컬럼 순서 이동 /api/columns/{columnId}
-  @PutMapping("/change/{columnsId}")
+  @PutMapping("/{columnsId}/shifting")
   public ResponseEntity<CommonResponse<Void>> changeNumberColumns(
       @PathVariable Long columnsId,
       @RequestBody ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto
