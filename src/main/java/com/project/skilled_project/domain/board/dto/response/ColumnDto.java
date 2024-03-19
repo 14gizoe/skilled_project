@@ -1,6 +1,5 @@
 package com.project.skilled_project.domain.board.dto.response;
 
-import com.project.skilled_project.domain.column.entity.Columns;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +10,8 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ColumDto {
+public class ColumnDto {
+
   private String title;
   private List<CardDto> cards;
 }

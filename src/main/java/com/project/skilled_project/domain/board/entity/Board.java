@@ -16,6 +16,7 @@ import org.hibernate.annotations.SQLRestriction;
 @NoArgsConstructor
 @SQLRestriction("deleted_at is NULL")
 public class Board {
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -32,16 +33,16 @@ public class Board {
   @Column(name = "deleted_at")
   private LocalDateTime deletedAt;
 
-  public Board(BoardRequestDto req){
+  public Board(BoardRequestDto req) {
     this.title = req.getTitle();
   }
 
-  public void update(BoardRequestDto req){
+  public void update(BoardRequestDto req) {
     this.title = req.getTitle();
     this.color = req.getColor();
   }
 
-  public void softDelete(){
+  public void softDelete() {
     this.deletedAt = LocalDateTime.now();
   }
 

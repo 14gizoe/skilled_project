@@ -1,6 +1,5 @@
 package com.project.skilled_project.domain.board.dto.response;
 
-import com.project.skilled_project.domain.board.entity.Board;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -11,9 +10,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BoardsResponseDto {
+
   private List<String> boardTitle = new ArrayList<>();
 
-  public void boardTitleUpdate(String title){
+  public void boardTitleUpdate(String title) {
     boardTitle.add(title);
   }
 }

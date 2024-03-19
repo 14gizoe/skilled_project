@@ -7,12 +7,11 @@ import com.project.skilled_project.domain.board.dto.response.BoardResponseDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsResponseDto;
 import com.project.skilled_project.domain.board.dto.response.CardDto;
-import com.project.skilled_project.domain.board.dto.response.ColumDto;
+import com.project.skilled_project.domain.board.dto.response.ColumnDto;
 import com.project.skilled_project.domain.board.entity.Board;
 import com.project.skilled_project.domain.board.repository.BoardRepository;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -48,34 +47,41 @@ public class BoardServiceImpl implements BoardService {
   @Override
   public BoardDto getBoard(Long boardId) {
     List<BoardResponseDto> boardList = boardRepository.getBoard(boardId);
+
     String title = boardList.get(0).getBoardTitle();
     String color = boardList.get(0).getBoardColor();
-    Map<Long, ColumDto> columDtoMap = new LinkedHashMap<>();
-    Map<Long, CardDto> cardDtoMap = new LinkedHashMap<>();
+
+    List<ColumnDto> columnDtoList = mapppingBoard(
+        boardList);
+    return new BoardDto(title, color, columnDtoList);
+  }
+
+  private List<ColumnDto> mapppingBoard(List<BoardResponseDto> boardList) {
+    Map<Long, ColumnDto> columnDtoMap = new HashMap<>();
+    Map<Long, List<CardDto>> cardDtoMap = new HashMap<>();
+
     for (BoardResponseDto dto : boardList) {
-      if (dto.getCard() != null && dto.getCard().getColumnId().equals(dto.getColumns().getId())) {
-        cardDtoMap.put(
-            dto.getCard().getColumnId(),
-            new CardDto(dto.getCard())
-        );
+      Long columnId = dto.getColumns().getId();
+      if (!columnDtoMap.containsKey(columnId)) {
+        columnDtoMap.put(columnId, new ColumnDto(dto.getColumns().getTitle(), new ArrayList<>()));
+        cardDtoMap.put(columnId, new ArrayList<>());
       }
-    }
-    System.out.println("cardDtoMap = " + cardDtoMap);
-    List<CardDto> cardDtos = new ArrayList<>();
-    for (BoardResponseDto dto : boardList) {
-      if (dto.getColumns() != null) {
-        columDtoMap.put(
-            dto.getColumns().getId(),
-            new ColumDto(
-                dto.getColumns().getTitle(),
-                cardDtos
-            )
-        );
+
+      if (dto.getCard() != null) {
+        cardDtoMap.get(columnId).add(new CardDto(
+            dto.getCard()
+        ));
       }
     }
 
-    List<ColumDto> columDtoList = new ArrayList<>(columDtoMap.values());
-    return new BoardDto(title, color, columDtoList);
+    for (Map.Entry<Long, ColumnDto> entry : columnDtoMap.entrySet()) {
+      Long columnId = entry.getKey();
+      List<CardDto> cards = cardDtoMap.get(columnId);
+      entry.getValue().setCards(cards);
+    }
+
+    List<ColumnDto> columnDtoList = new ArrayList<>(columnDtoMap.values());
+    return columnDtoList;
   }
 
   @Override

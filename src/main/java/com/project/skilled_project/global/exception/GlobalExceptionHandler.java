@@ -8,11 +8,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j(topic = "GlobalExceptionHandler -> ")
 public class GlobalExceptionHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public void methodArgumentNotValidException(
-        MethodArgumentNotValidException e
-    ) {
 
-        log.error("MethodArgumentNotValidException: ", e);
-    }
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public void methodArgumentNotValidException(
+      MethodArgumentNotValidException e
+  ) {
+
+    log.error("MethodArgumentNotValidException: ", e);
+  }
 }
