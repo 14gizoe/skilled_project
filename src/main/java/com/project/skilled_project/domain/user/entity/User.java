@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
@@ -50,5 +51,10 @@ public class User extends Timestamp {
     this.username = username;
     this.password = password;
     this.profileImage = profileImage;
+  }
+
+  public void delete(String username) {
+    this.username = username;
+    this.deletedAt = LocalDateTime.now();
   }
 }
