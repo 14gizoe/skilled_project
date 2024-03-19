@@ -1,5 +1,6 @@
 package com.project.skilled_project.domain.columns.controller;
 
+import com.project.skilled_project.domain.columns.dto.request.ColumnsChangeNumberRequestDto;
 import com.project.skilled_project.domain.columns.dto.request.ColumnsCreateRequestDto;
 import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameRequestDto;
 import com.project.skilled_project.domain.columns.service.ColumnsService;
@@ -53,5 +54,16 @@ public class ColumnsController {
         CommonResponse.<Void>builder().build());
   }
   //컬럼 순서 이동 /api/columns/{columnId}
+  @PutMapping("/{columnsId}")
+  public ResponseEntity<CommonResponse<Void>> changeNumberColumns(
+      @PathVariable Long columnsId,
+      @RequestBody ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto
+  ) {
+    columnsService.changeNumberColumns(columnsId, columnsChangeNumberRequestDto);
+    return ResponseEntity.status(HttpStatus.OK.value()).body(
+        CommonResponse.<Void>builder().build());
+  }
+
+
 
 }

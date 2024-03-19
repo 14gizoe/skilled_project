@@ -32,4 +32,7 @@ public class Columns {
     this.title = columnsUpdateNameRequestDto.getTitle();
   }
 
+  public void changeNumberColumns(Long columnsId){
+    this.id = columnsId;
+  }
 }
