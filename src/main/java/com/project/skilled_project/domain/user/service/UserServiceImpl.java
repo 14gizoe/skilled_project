@@ -4,6 +4,7 @@ import com.project.skilled_project.domain.user.entity.User;
 import com.project.skilled_project.domain.user.repository.RefreshTokenRepository;
 import com.project.skilled_project.domain.user.repository.UserRepository;
 import com.project.skilled_project.domain.user.repository.UserRepositoryQuery;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -51,5 +52,15 @@ public class UserServiceImpl implements UserService {
     String encodedPassword = passwordEncoder.encode(password);
     user.update(email, username, encodedPassword, localPath);
     refreshTokenRepository.delete(username);
+  }
+
+  @Override
+  @Transactional
+  public void deleteUser(String username) {
+    User user = userRepository.findByUsername(username).orElseThrow(() ->
+        new UsernameNotFoundException("존재하지 않는 유저입니다.")
+    );
+
+    user.delete(UUID.randomUUID().toString());
   }
 }
