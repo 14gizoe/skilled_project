@@ -2,7 +2,6 @@ package com.project.skilled_project.global.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.skilled_project.domain.user.repository.RefreshTokenRepository;
-import com.project.skilled_project.global.response.CommonResponse;
 import com.project.skilled_project.global.response.ErrorResponse;
 import com.project.skilled_project.global.util.JwtUtil;
 import com.project.skilled_project.global.util.UserDetailsImpl;
@@ -48,17 +47,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
       int tokenStatus = jwtUtil.validateToken(tokenValue);
 
       if (tokenStatus == 1) {
+        log.error("Token Error");
+        return;
+      } else if (tokenStatus == 2) {
         try {
-          Claims info = jwtUtil.getUserInfoFromExpriedToken(tokenValue);
-          UserDetailsImpl userDetails = (UserDetailsImpl) userDetailsService.loadUserByUsername(
-              info.getSubject());
-          String refreshToken = refreshTokenRepository.findById(
-              userDetails.getUser().getId());
-          if (refreshToken != null
-              && jwtUtil.validateToken(refreshToken) == 0) {
-            String newAccessToken = jwtUtil.createAccessToken(info.getSubject());
-            res.addHeader(jwtUtil.AUTHORIZATION_HEADER, newAccessToken);
-
+          Claims info = jwtUtil.getExpiredTokenClaims(tokenValue);
+          if (refreshTokenRepository.existsByKey(info.getSubject())) {
+            String newToken = jwtUtil.createAccessToken(info.getSubject());
+            res.addHeader(JwtUtil.AUTHORIZATION_HEADER, newToken);
             res.setStatus(HttpServletResponse.SC_OK);
 
             String jsonResponse = objectMapper.writeValueAsString(
@@ -67,39 +63,28 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             res.setContentType("application/json");
             res.setCharacterEncoding("UTF-8");
             res.getWriter().write(jsonResponse);
-            return;
           } else {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
             String jsonResponse = objectMapper.writeValueAsString(
                 new ErrorResponse("Access Token과 Refresh Token이 모두 만료되었습니다."));
-            refreshTokenRepository.delete(userDetails.getUser().getId());
+            refreshTokenRepository.delete(info.getSubject());
 
             res.setContentType("application/json");
             res.setCharacterEncoding("UTF-8");
             res.getWriter().write(jsonResponse);
-            return;
           }
+          return;
         } catch (Exception e) {
           log.error(e.getMessage());
           return;
         }
-      } else if (tokenStatus == 2) {
-        log.error("Token Error");
-        return;
-      }
-
-      Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-
-      try {
+      } else { // 유효한 토큰
+        Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
         setAuthentication(info.getSubject());
-      } catch (Exception e) {
-        log.error(e.getMessage());
-        return;
       }
     }
-
-    filterChain.doFilter(req, res);
+      filterChain.doFilter(req, res);
   }
 
   // 인증 처리

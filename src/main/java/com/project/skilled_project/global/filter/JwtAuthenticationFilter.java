@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
       return getAuthenticationManager().authenticate(
           new UsernamePasswordAuthenticationToken(
-              requestDto.getEmail(),
+              requestDto.getUsername(),
               requestDto.getPassword(),
               null
           )
@@ -57,10 +57,10 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       throws IOException {
     User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
 
-    String accessToken = jwtUtil.createAccessToken(user.getEmail());
-    String refreshToken = jwtUtil.createRefreshToken(user.getEmail()).substring(7);
+    String accessToken = jwtUtil.createAccessToken(user.getUsername());
+    String refreshToken = jwtUtil.createRefreshToken(user.getUsername()).substring(7);
     response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
-    refreshTokenRepository.save(user.getId(), refreshToken);
+    refreshTokenRepository.save(user.getUsername(), refreshToken);
 
     response.setStatus(HttpServletResponse.SC_OK);
 
