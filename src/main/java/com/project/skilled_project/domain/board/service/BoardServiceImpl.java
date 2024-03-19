@@ -80,8 +80,7 @@ public class BoardServiceImpl implements BoardService {
       entry.getValue().setCards(cards);
     }
 
-    List<ColumnDto> columnDtoList = new ArrayList<>(columnDtoMap.values());
-    return columnDtoList;
+    return new ArrayList<>(columnDtoMap.values());
   }
 
   @Override
