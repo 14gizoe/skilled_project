@@ -8,12 +8,12 @@ import org.springframework.transaction.annotation.Transactional;
 public interface ColumnsService {
 
   // 컬럼 생성
-  public void createColumns(ColumnsCreateRequestDto columnsCreateRequestDto, Long boardId);
+  public void createColumns(ColumnsCreateRequestDto columnsCreateRequestDto);
 
-  public void updateNameColumns(Long columnId,
+  public void updateNameColumns(Long columnsId,
       ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto);
 
-  public void deleteColumns(Long columnId);
+  public void deleteColumns(Long columnsId);
 
 
 }

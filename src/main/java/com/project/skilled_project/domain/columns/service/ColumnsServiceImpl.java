@@ -17,22 +17,22 @@ public class ColumnsServiceImpl implements ColumnsService {
 
   // 컬럼 생성
   @Override
-  public void createColumns(ColumnsCreateRequestDto columnsCreateRequestDto, Long boardId) {
-    Columns columns = new Columns(boardId, columnsCreateRequestDto.getTitle());
+  public void createColumns(ColumnsCreateRequestDto columnsCreateRequestDto) {
+    Columns columns = new Columns(columnsCreateRequestDto);
     columnsRepository.save(columns);
   }
 
   @Override
-  public void updateNameColumns(Long columnId,
+  public void updateNameColumns(Long columnsId,
       ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto) {
-    Columns columns = columnsRepository.findById(columnId)
+    Columns columns = columnsRepository.findById(columnsId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컬럼입니다."));
     columns.updateNameColumns(columnsUpdateNameRequestDto);
   }
 
   @Override
-  public void deleteColumns(Long columnId) {
-    Columns columns = columnsRepository.findById(columnId)
+  public void deleteColumns(Long columnsId) {
+    Columns columns = columnsRepository.findById(columnsId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컬럼입니다."));
     columnsRepository.delete(columns);
   }

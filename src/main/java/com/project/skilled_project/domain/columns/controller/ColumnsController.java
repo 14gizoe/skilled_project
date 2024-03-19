@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/columns")
 public class ColumnsController {
 
   private final ColumnsService columnsService;
@@ -23,30 +25,30 @@ public class ColumnsController {
   // 컬럼 생성 /api/columns
   @PostMapping
   public ResponseEntity<CommonResponse<Void>> createColumns(
-      @RequestBody ColumnsCreateRequestDto columnsCreateRequestDto,
-      @PathVariable Long boardId
+      @RequestBody ColumnsCreateRequestDto columnsCreateRequestDto
   ) {
-    columnsService.createColumns(columnsCreateRequestDto, boardId);
+    columnsService.createColumns(columnsCreateRequestDto);
     return ResponseEntity.status(HttpStatus.OK.value()).body(
         CommonResponse.<Void>builder().build());
   }
 
   // 컬럼 이름 수정 /api/columns/{columnId}
-  @PutMapping("/{columnId}")
+  @PutMapping("/{columnsId}")
   public ResponseEntity<CommonResponse<Void>> updateNameColumns(
-      @PathVariable Long columnId,
+      @PathVariable Long columnsId,
       @RequestBody ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto
   ) {
-    columnsService.updateNameColumns(columnId, columnsUpdateNameRequestDto);
+    columnsService.updateNameColumns(columnsId, columnsUpdateNameRequestDto);
     return ResponseEntity.status(HttpStatus.OK.value()).body(
         CommonResponse.<Void>builder().build());
   }
 
   // 컬럼 삭제 /api/columns/{columnId}
-  @DeleteMapping("/{columnId}")
-  public ResponseEntity<CommonResponse<Void>> deleteColumns(@PathVariable Long columnId) {
+  @DeleteMapping("/{columnsId}")
+  public ResponseEntity<CommonResponse<Void>> deleteColumns(
+      @PathVariable Long columnsId) {
 
-    columnsService.deleteColumns(columnId);
+    columnsService.deleteColumns(columnsId);
     return ResponseEntity.status(HttpStatus.OK.value()).body(
         CommonResponse.<Void>builder().build());
   }
