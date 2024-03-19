@@ -1,6 +1,7 @@
 package com.project.skilled_project.domain.columns.entity;
 
 
+import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -23,6 +24,10 @@ public class Columns {
   public Columns(Long boardId, String title) {
     this.boardId = boardId;
     this.title = title;
+  }
+
+  public void updateNameColumns(ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto) {
+    this.title = columnsUpdateNameRequestDto.getTitle();
   }
 
 }
