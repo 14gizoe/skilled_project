@@ -4,7 +4,9 @@ import lombok.Getter;
 
 @Getter
 public class ColumnsCreateRequestDto {
+
   private Long boardId;
   private String title;
+  private Long position;
 
 }
