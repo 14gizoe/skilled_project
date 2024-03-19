@@ -37,7 +37,8 @@ public class BoardServiceImpl implements BoardService {
   @Transactional
   public void createBoard(BoardRequestDto req, User user) {
     Board board = new Board(req, user);
-    boardRepository.save(board);
+    Long id = boardRepository.save(board).getId();
+    log.info(id+"");
   }
 
   @Override

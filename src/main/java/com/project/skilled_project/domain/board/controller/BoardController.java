@@ -26,18 +26,15 @@ public class BoardController {
 
   private final BoardService boardService;
 
-  @PostMapping("")
-  public ResponseEntity<CommonResponse<Void>> createBoard(
+  @PostMapping
+  public void createBoard(
       @RequestBody BoardRequestDto req,
       UserDetailsImpl userDetails
   ) {
     boardService.createBoard(req, userDetails.getUser());
-    return ResponseEntity.ok().body(
-        CommonResponse.<Void>builder().build()
-    );
   }
 
-  @GetMapping("")
+  @GetMapping
   public ResponseEntity<CommonResponse<BoardsResponseDto>> getBoards() {
     return ResponseEntity.ok().body(
         CommonResponse.<BoardsResponseDto>builder()
