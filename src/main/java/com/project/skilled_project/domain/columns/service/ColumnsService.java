@@ -10,10 +10,10 @@ public interface ColumnsService {
   // 컬럼 생성
   public void createColumns(ColumnsCreateRequestDto columnsCreateRequestDto, Long boardId);
 
-  public void updateNameColumn(Long columnId,
+  public void updateNameColumns(Long columnId,
       ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto);
 
-  public void deleteColumn();
+  public void deleteColumns(Long columnId);
 
 
 }

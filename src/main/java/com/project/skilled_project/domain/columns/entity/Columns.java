@@ -5,6 +5,7 @@ import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameR
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.NoArgsConstructor;
 
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Columns {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "columns_id", nullable = false)
   private Long id;
   @Column(name = "title", nullable = false)
