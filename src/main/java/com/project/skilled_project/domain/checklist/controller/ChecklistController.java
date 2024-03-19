@@ -23,12 +23,12 @@ public class ChecklistController {
     checklistService.createCheckList(checkListDto);
   }
 
-  @DeleteMapping("/checklist/{checklistId}")
+  @DeleteMapping("/{checklistId}")
   public void deleteChecklist(@PathVariable Long checklistId) {
     checklistService.deleteCheckList(checklistId);
   }
 
-  @PatchMapping("/checklist/{checklistId}")
+  @PatchMapping("/{checklistId}")
   public void toggleChecklist(@PathVariable Long checklistId) {
     checklistService.toggleChecklist(checklistId);
   }
