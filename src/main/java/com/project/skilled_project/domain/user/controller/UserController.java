@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +36,14 @@ public class UserController {
   ) {
     userService.updateUser(userDto.getEmail(), userDto.getUsername(), userDto.getPassword(),
         userDetails.getUsername());
+    return CommonResponse.ok(null);
+  }
+
+  @DeleteMapping
+  public ResponseEntity<CommonResponse<Void>> deleteUser(
+      @AuthenticationPrincipal UserDetails userDetails
+  ) {
+    userService.deleteUser(userDetails.getUsername());
     return CommonResponse.ok(null);
   }
 }
