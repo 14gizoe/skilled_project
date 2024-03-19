@@ -1,20 +1,22 @@
 package com.project.skilled_project.domain.board.service;
 
-import com.project.skilled_project.domain.board.dto.response.BoardResponseDto;
+import com.project.skilled_project.domain.board.dto.request.BoardRequestDto;
+import com.project.skilled_project.domain.board.dto.request.UserInviteRequestDto;
+import com.project.skilled_project.domain.board.dto.response.BoardDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsResponseDto;
 
 
 public interface BoardService {
 
-  void createBoard();
+  void createBoard(BoardRequestDto req);
 
   BoardsResponseDto getBoards();
 
-  BoardResponseDto getBoard();
+  BoardDto getBoard(Long boardId);
 
-  void updateBoard();
+  void updateBoard(Long boardId, BoardRequestDto req);
 
-  void inviteUser();
+  void inviteUser(Long boardId, UserInviteRequestDto req);
 
-  void deleteBoard();
+  void deleteBoard(Long boardId);
 }
