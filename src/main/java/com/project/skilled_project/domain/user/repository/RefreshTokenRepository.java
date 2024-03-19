@@ -16,23 +16,16 @@ public class RefreshTokenRepository {
   @Resource(name = "redisTemplate")
   private ValueOperations<String, String> valueOperations;
 
-
-  public void delete(Long userId) {
-    redisTemplate.delete(String.valueOf(userId));
+  public void delete(String username) {
+    redisTemplate.delete(username);
   }
 
-  public void save(Long userId, String refreshToken) {
-    valueOperations.set(String.valueOf(userId), refreshToken);
-    redisTemplate.expire(String.valueOf(userId), 7L, TimeUnit.DAYS);
+  public void save(String username, String refreshToken) {
+    valueOperations.set(username, refreshToken);
+    redisTemplate.expire(username, 7L, TimeUnit.DAYS);
   }
 
-  public String findById(Long userId) {
-    String refreshToken = valueOperations.get(String.valueOf(userId));
-
-    if (userId == null) {
-      return null;
-    }
-
-    return refreshToken;
+  public boolean existsByKey(String key) {
+    return valueOperations.getOperations().hasKey(key);
   }
 }
