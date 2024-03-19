@@ -53,8 +53,9 @@ public class ColumnsController {
     return ResponseEntity.status(HttpStatus.OK.value()).body(
         CommonResponse.<Void>builder().build());
   }
+
   //컬럼 순서 이동 /api/columns/{columnId}
-  @PutMapping("/{columnsId}")
+  @PutMapping("/change/{columnsId}")
   public ResponseEntity<CommonResponse<Void>> changeNumberColumns(
       @PathVariable Long columnsId,
       @RequestBody ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto

@@ -8,31 +8,39 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 public class Columns {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = "columns_id", nullable = false)
-  private Long id;
+  private Long columnsId;
   @Column(name = "title", nullable = false)
   private String title;
   @Column(name = "board_id", nullable = false)
   private Long boardId;
+  @Column(name = "position", nullable = false)
+  private Long position;
+
 
   public Columns(ColumnsCreateRequestDto columnsCreateRequestDto) {
     this.boardId = columnsCreateRequestDto.getBoardId();
     this.title = columnsCreateRequestDto.getTitle();
+    this.position = columnsCreateRequestDto.getPosition();
   }
 
   public void updateNameColumns(ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto) {
     this.title = columnsUpdateNameRequestDto.getTitle();
   }
 
-  public void changeNumberColumns(Long columnsId){
-    this.id = columnsId;
+  public void changePositionColumns(Long position) {
+    this.position = position;
   }
 }
