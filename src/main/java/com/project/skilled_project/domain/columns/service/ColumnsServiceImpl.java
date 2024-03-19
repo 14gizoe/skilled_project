@@ -5,10 +5,10 @@ import com.project.skilled_project.domain.columns.dto.request.ColumnsCreateReque
 import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameRequestDto;
 import com.project.skilled_project.domain.columns.entity.Columns;
 import com.project.skilled_project.domain.columns.repository.ColumnsRepository;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Queue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,76 +55,38 @@ public class ColumnsServiceImpl implements ColumnsService {
     }
     // 어느 보드에 있는지 알아야함.
     // 수정하려는 컬럼과 같은 보드의 컬럼들을 불러와서 리스트로 만듬
-    List<Columns> columnsList = columnsRepository.findAllByBoardId(columns.getBoardId());
-    Long[] columnsIdArrays = new Long[columnsList.size()];
-    Long[] columnsPosition = new Long[columnsList.size()];
-    for (int i = 0; i < columnsPosition.length; i++) {
-      columnsIdArrays[i] = columnsList.get(i).getColumnsId();
-      columnsPosition[i] = columnsList.get(i).getPosition();
-    }
-    // 포지션에 맞춰서 정렬
-    for (int i = 0; i < columnsPosition.length; i++) {
-      for (int j = i + 1; j < columnsPosition.length; j++) {
-        if (columnsPosition[i] > columnsPosition[j]) {
-          Long tmp = columnsPosition[i];
-          columnsPosition[i] = columnsPosition[j];
-          columnsPosition[j] = tmp;
-          tmp = columnsIdArrays[i];
-          columnsIdArrays[i] = columnsIdArrays[j];
-          columnsIdArrays[j] = tmp;
-        }
-      }
-    }
-    Long[] columnsIdAdressCopy = columnsIdArrays.clone();
-    // 누가 누구의 자리를 제치고 갈건지.
-    // 내려갈땐 대상의 아래까지
-    // 올라갈땐 대상의 바로 위까지.
     Long who = columns.getPosition();
     Long where = columns1.getPosition();
-    if (who > where) {
-      // 옮기려는 컬럼이 더 아래에 있을때 (위로 올릴때 )
-      List<Long> columnsPositionList = Arrays.asList(columnsPosition);
-      Collections.reverse(columnsPositionList);
-      columnsPosition = columnsPositionList.toArray(columnsPosition);
+    Long gab = 0L;
+    List<Columns> columnsList = null;
 
-      List<Long> columnsIdArraysList = Arrays.asList(columnsIdArrays);
-      Collections.reverse(columnsIdArraysList);
-      columnsIdArrays = columnsIdArraysList.toArray(columnsIdArrays);
+    if (who < where) {
+      columnsList = columnsRepository.findAllByBoardIdOrderByPositionAsc(
+          columns.getBoardId());
+    } else if (where < who) {
+      columnsList = columnsRepository.findAllByBoardIdOrderByPositionDesc(
+          columns.getBoardId());
+    }
 
-      List<Long> columnsIdAdressCopyList = Arrays.asList(columnsIdAdressCopy);
-      Collections.reverse(columnsIdAdressCopyList);
-      columnsIdAdressCopy = columnsIdAdressCopyList.toArray(columnsIdAdressCopy);
+    Queue<Long> positionStack = new LinkedList<>();
+    int i = 0;
+    while (!Objects.equals(columnsList.get(i).getPosition(), who)) {
+      i++;
     }
-    // 옮기려는 컬럼이 더 위에 있을때는 그냥 ( 아래로 내릴때 )
+    positionStack.add(columnsList.get(i).getPosition());
+    i++;
+    while (!Objects.equals(columnsList.get(i).getPosition(), where)) {
+      Columns columnsChange = columnsRepository.findByPosition(
+          columnsList.get(i).getPosition());
+      positionStack.add(columnsList.get(i).getPosition());
+      columnsChange.changePositionColumns(positionStack.poll());
+      i++;
+    }
+    Columns columnsChange = columnsRepository.findByPosition(
+        columnsList.get(i).getPosition());
+    positionStack.add(columnsList.get(i).getPosition());
+    columnsChange.changePositionColumns(positionStack.poll());
+    columns.changePositionColumns(positionStack.poll());
 
-    for (int i = 0; i < columnsPosition.length; i++) {
-      if (Objects.equals(who, columnsPosition[i])) {
-        for (int j = i + 1; j < columnsPosition.length; j++) {
-          Long tmp = columnsIdArrays[j - 1];
-          columnsIdArrays[j - 1] = columnsIdArrays[j];
-          columnsIdArrays[j] = tmp;
-          if (Objects.equals(columnsPosition[j], where)) {
-            break;
-          }
-        }
-        break;
-      }
-    }
-    for (int i = 0; i < columnsIdArrays.length; i++) {
-      if (!Objects.equals(columnsIdArrays[i], columnsIdAdressCopy[i])) {
-        for (int j = i; j < columnsIdArrays.length; j++) {
-          if (Objects.equals(columnsIdArrays[j], columnsIdAdressCopy[j])) {
-            break;
-          }
-          System.out.println(Arrays.toString(columnsIdArrays));
-          System.out.println(columnsIdArrays[j]);
-          // 값 바꿔주기.
-          Columns columnsChange = columnsRepository.findById(columnsIdArrays[j])
-              .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컬럼입니다.2"));
-          columnsChange.changePositionColumns(columnsPosition[j]);
-        }
-        break;
-      }
-    }
   }
 }

@@ -19,7 +19,7 @@ import lombok.Setter;
 public class Columns {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.AUTO)
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "columns_id", nullable = false)
   private Long columnsId;
   @Column(name = "title", nullable = false)

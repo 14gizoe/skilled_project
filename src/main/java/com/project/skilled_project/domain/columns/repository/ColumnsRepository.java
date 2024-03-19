@@ -8,7 +8,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ColumnsRepository extends JpaRepository<Columns, Long> {
 
-  List<Columns> findAllByBoardId(Long BoardId);
+  List<Columns> findAllByBoardIdOrderByPositionDesc(Long BoardId);
+  List<Columns> findAllByBoardIdOrderByPositionAsc(Long BoardId);
+  Columns findByPosition(Long Position);
 
 
 }
