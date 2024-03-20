@@ -1,5 +1,6 @@
 package com.project.skilled_project.domain.comment.entity;
 
+import com.project.skilled_project.global.util.Timestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +16,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @NoArgsConstructor
 @SQLRestriction(value = "deleted_at is NULL")
-public class Comment {
+public class Comment extends Timestamp {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,5 +36,9 @@ public class Comment {
     this.content = content;
     this.cardId = cardId;
     this.userId = userId;
+  }
+
+  public void update(String content) {
+    this.content = content;
   }
 }
