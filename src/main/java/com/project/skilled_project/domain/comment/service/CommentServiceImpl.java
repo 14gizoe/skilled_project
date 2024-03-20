@@ -34,6 +34,4 @@ public class CommentServiceImpl implements CommentService {
 
     comment.update(content);
   }
-
-
 }
