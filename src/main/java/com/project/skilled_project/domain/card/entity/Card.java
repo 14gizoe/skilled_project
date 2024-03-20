@@ -19,8 +19,8 @@ import org.hibernate.annotations.SQLRestriction;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLDelete(sql = "update card set deleted_date = NOW() where card_id=?")
-@SQLRestriction(value = "deleted_date is NULL")
+@SQLDelete(sql = "update card set deleted_at = NOW() where id=?")
+@SQLRestriction(value = "deleted_at is NULL")
 public class Card extends Timestamp {
 
   @Id

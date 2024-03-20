@@ -7,4 +7,6 @@ public interface CardService {
   void createCard(CardCreateRequestDto cardCreateRequestDto);
 
   void updateCard(Long cardId, CardUpdateRequestDto cardUpdateRequestDto, String username);
+
+  void deleteCard(Long cardId, String username);
 }

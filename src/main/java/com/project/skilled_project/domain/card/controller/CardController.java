@@ -6,6 +6,7 @@ import com.project.skilled_project.domain.card.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,5 +29,10 @@ public class CardController {
   public void updateCard(@PathVariable Long cardId, @RequestBody CardUpdateRequestDto cardUpdateRequestDto,
                          @AuthenticationPrincipal UserDetails userDetails) {
     cardService.updateCard(cardId, cardUpdateRequestDto, userDetails.getUsername());
+  }
+
+  @DeleteMapping("/{cardId}")
+  public void deleteCard(@PathVariable Long cardId, @AuthenticationPrincipal UserDetails userDetails) {
+    cardService.deleteCard(cardId, userDetails.getUsername());
   }
 }

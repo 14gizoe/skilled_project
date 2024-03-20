@@ -45,16 +45,29 @@ public class CardServiceImpl implements CardService{
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
-    List<Long> workerIds = workerRepository.findAllUserIdByCardId(cardId);
-    if (isWorkernotInList(user.getId(), workerIds)) {
+    if (isWorkernotInCard(user.getId(), cardId)) {
       throw new IllegalArgumentException("수정권한 없음");
     }
     card.update(cardUpdateRequestDto);
   }
 
-  private boolean isWorkernotInList(Long id, List<Long> workerIds) {
+  @Override
+  public void deleteCard(Long cardId, String username) {
+    User user = userService.findUser(username);
+    Card card = cardRepository.findById(cardId).orElseThrow(
+        () -> new EntityNotFoundException("카드 없음")
+    );
+
+    if (isWorkernotInCard(user.getId(), cardId)) {
+      throw new IllegalArgumentException("삭제권한 없음");
+    }
+    cardRepository.delete(card);
+  }
+
+  private boolean isWorkernotInCard(Long userId, Long cardId) {
+    List<Long> workerIds = workerRepository.findAllUserIdByCardId(cardId);
     for (Long workerId : workerIds) {
-      if (id.equals(workerId)) {
+      if (userId.equals(workerId)) {
         return false;
       }
     }
