@@ -9,4 +9,6 @@ public interface UserService {
   void updateUser(String email, String username, String password, String verifiedUser);
 
   void deleteUser(String username);
+
+  User findUser(String username);
 }
