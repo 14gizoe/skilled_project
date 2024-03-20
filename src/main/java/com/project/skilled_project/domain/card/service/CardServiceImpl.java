@@ -3,6 +3,7 @@ package com.project.skilled_project.domain.card.service;
 import com.project.skilled_project.domain.board.entity.Board;
 import com.project.skilled_project.domain.board.repository.BoardRepository;
 import com.project.skilled_project.domain.card.dto.request.CardCreateRequestDto;
+import com.project.skilled_project.domain.card.dto.request.CardUpdateDateRequestDto;
 import com.project.skilled_project.domain.card.dto.request.CardUpdateRequestDto;
 import com.project.skilled_project.domain.card.entity.Card;
 import com.project.skilled_project.domain.card.repository.CardRepository;
@@ -46,9 +47,25 @@ public class CardServiceImpl implements CardService{
         () -> new EntityNotFoundException("카드 없음")
     );
     if (isWorkernotInCard(user.getId(), cardId)) {
-      throw new IllegalArgumentException("수정권한 없음");
+      throw new IllegalArgumentException("카드 수정권한 없음");
     }
     card.update(cardUpdateRequestDto);
+  }
+
+  @Override
+  public void updateCardDate(
+      Long cardId,
+      CardUpdateDateRequestDto cardUpdateDateRequestDto,
+      String username
+  ) {
+    User user = userService.findUser(username);
+    Card card = cardRepository.findById(cardId).orElseThrow(
+        () -> new EntityNotFoundException("카드 없음")
+    );
+    if (isWorkernotInCard(user.getId(), cardId)) {
+      throw new IllegalArgumentException("목표기간 수정권한 없음");
+    }
+    card.updateDate(cardUpdateDateRequestDto);
   }
 
   @Override
@@ -59,7 +76,7 @@ public class CardServiceImpl implements CardService{
     );
 
     if (isWorkernotInCard(user.getId(), cardId)) {
-      throw new IllegalArgumentException("삭제권한 없음");
+      throw new IllegalArgumentException("카드 삭제권한 없음");
     }
     cardRepository.delete(card);
   }

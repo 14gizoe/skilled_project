@@ -1,6 +1,7 @@
 package com.project.skilled_project.domain.card.entity;
 
 import com.project.skilled_project.domain.card.dto.request.CardCreateRequestDto;
+import com.project.skilled_project.domain.card.dto.request.CardUpdateDateRequestDto;
 import com.project.skilled_project.domain.card.dto.request.CardUpdateRequestDto;
 import com.project.skilled_project.global.util.Timestamp;
 import jakarta.persistence.Column;
@@ -53,5 +54,10 @@ public class Card extends Timestamp {
     this.title = cardUpdateRequestDto.getTitle();
     this.description = cardUpdateRequestDto.getDescription();
     this.color = cardUpdateRequestDto.getColor();
+  }
+
+  public void updateDate(CardUpdateDateRequestDto cardUpdateDateRequestDto) {
+    this.startDate = cardUpdateDateRequestDto.getStartDate();
+    this.endDate = cardUpdateDateRequestDto.getEndDate();
   }
 }

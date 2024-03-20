@@ -1,12 +1,14 @@
 package com.project.skilled_project.domain.card.controller;
 
 import com.project.skilled_project.domain.card.dto.request.CardCreateRequestDto;
+import com.project.skilled_project.domain.card.dto.request.CardUpdateDateRequestDto;
 import com.project.skilled_project.domain.card.dto.request.CardUpdateRequestDto;
 import com.project.skilled_project.domain.card.service.CardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,6 +33,12 @@ public class CardController {
     cardService.updateCard(cardId, cardUpdateRequestDto, userDetails.getUsername());
   }
 
+
+  @PatchMapping("/{cardId}/date")
+  public void updateCardDate(@PathVariable Long cardId, @RequestBody CardUpdateDateRequestDto cardUpdateDateRequestDto,
+                          @AuthenticationPrincipal UserDetails userDetails) {
+    cardService.updateCardDate(cardId, cardUpdateDateRequestDto, userDetails.getUsername());
+  }
   @DeleteMapping("/{cardId}")
   public void deleteCard(@PathVariable Long cardId, @AuthenticationPrincipal UserDetails userDetails) {
     cardService.deleteCard(cardId, userDetails.getUsername());
