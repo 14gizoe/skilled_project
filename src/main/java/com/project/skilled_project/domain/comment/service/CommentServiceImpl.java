@@ -35,5 +35,14 @@ public class CommentServiceImpl implements CommentService {
     comment.update(content);
   }
 
+  @Override
+  @Transactional
+  public void deleteComment(Long commentId, String username) {
+    User user = userService.findUser(username);
+    Comment comment = commentRepositoryQuery.getComment(commentId, user.getId());
+
+    comment.delete();
+  }
+
 
 }

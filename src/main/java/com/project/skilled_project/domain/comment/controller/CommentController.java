@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,6 +41,15 @@ public class CommentController {
     @AuthenticationPrincipal UserDetails userDetails
   ) {
     commentService.updateComment(commentId, commentRequest.getContent(), userDetails.getUsername());
+    return CommonResponse.ok(null);
+  }
+
+  @DeleteMapping("/{commentId}")
+  public ResponseEntity<CommonResponse<Void>> deleteComment(
+      @PathVariable Long commentId,
+      @AuthenticationPrincipal UserDetails userDetails
+  ) {
+    commentService.deleteComment(commentId, userDetails.getUsername());
     return CommonResponse.ok(null);
   }
 }

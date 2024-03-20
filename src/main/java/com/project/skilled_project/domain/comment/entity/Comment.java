@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLRestriction;
@@ -40,5 +41,9 @@ public class Comment extends Timestamp {
 
   public void update(String content) {
     this.content = content;
+  }
+
+  public void delete() {
+    this.deletedAt = LocalDateTime.now();
   }
 }
