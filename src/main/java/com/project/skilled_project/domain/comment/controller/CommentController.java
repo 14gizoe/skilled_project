@@ -4,7 +4,6 @@ import com.project.skilled_project.domain.comment.dto.CommentReqeustDto;
 import com.project.skilled_project.domain.comment.dto.CommentUpdateRequestDto;
 import com.project.skilled_project.domain.comment.service.CommentServiceImpl;
 import com.project.skilled_project.global.response.CommonResponse;
-import com.project.skilled_project.global.util.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
