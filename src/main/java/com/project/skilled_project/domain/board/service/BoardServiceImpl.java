@@ -40,19 +40,28 @@ public class BoardServiceImpl implements BoardService {
   public void createBoard(BoardRequestDto req, String username) {
     User user = userService.findUser(username);
     Board board = new Board(req, user);
-    boardRepository.save(board);
+    Board savedBoard = boardRepository.save(board);
+    Participant participant = new Participant(savedBoard.getId(), user.getId());
+    participantRepository.save(participant);
   }
 
   @Override
   public BoardsResponseDto getBoards(String username) {
-//    User user = userService.findUser(username);
-//    validateUser(user, boardId);
+    User user = userService.findUser(username);
+    validateUserByUser(user);
     List<BoardsDto> boardsList = boardRepository.getBoards();
     BoardsResponseDto boardsResponseDto = new BoardsResponseDto();
     for (BoardsDto boardsDto : boardsList) {
       boardsResponseDto.boardTitleUpdate(boardsDto.getTitle());
     }
     return boardsResponseDto;
+  }
+
+  private void validateUserByUser(User user) {
+    List<Long> users = participantRepository.findByUserId(user.getId());
+    if (users.isEmpty()) {
+      throw new NullPointerException("보드에 존재하지 않은 유저입니다.");
+    }
   }
 
   @Override
@@ -74,16 +83,18 @@ public class BoardServiceImpl implements BoardService {
     Map<Long, List<CardDto>> cardDtoMap = new HashMap<>();
 
     for (BoardResponseDto dto : boardList) {
-      Long columnId = dto.getColumns().getId();
-      if (!columnDtoMap.containsKey(columnId)) {
-        columnDtoMap.put(columnId, new ColumnDto(dto.getColumns().getTitle(), new ArrayList<>()));
-        cardDtoMap.put(columnId, new ArrayList<>());
-      }
+      if (dto.getColumns() != null) {
+        Long columnId = dto.getColumns().getColumnsId();
+        if (!columnDtoMap.containsKey(columnId)) {
+          columnDtoMap.put(columnId, new ColumnDto(dto.getColumns().getTitle(), new ArrayList<>()));
+          cardDtoMap.put(columnId, new ArrayList<>());
+        }
 
-      if (dto.getCard() != null) {
-        cardDtoMap.get(columnId).add(new CardDto(
-            dto.getCard()
-        ));
+        if (dto.getCard() != null) {
+          cardDtoMap.get(columnId).add(new CardDto(
+              dto.getCard()
+          ));
+        }
       }
     }
 
@@ -99,21 +110,24 @@ public class BoardServiceImpl implements BoardService {
   @Override
   @Transactional
   public void updateBoard(Long boardId, BoardRequestDto req, String username) {
+    Board board = validateBoard(boardId);
     User user = userService.findUser(username);
     validateUser(user, boardId);
-    Board board = validateBoard(boardId);
     board.update(req);
   }
 
   @Override
   @Transactional
   public void inviteUser(Long boardId, UserInviteRequestDto req, String username) {
-    Participant participant;
-    List<Long> userList = participantRepository.findAllByBoardId(boardId);
-    Set<Long> set = new HashSet<>(userList);
-    for (Long id : userList) {
-      if (!set.contains(id)) {
-        participant = new Participant(boardId, id);
+    User user = userService.findUser(username);
+    validateUser(user, boardId);
+    List<Long> invitedUser = participantRepository.findAllByBoardId(boardId);
+    Set<Long> mergedSet = new HashSet<>(req.getInvitingList());
+    mergedSet.addAll(invitedUser);
+
+    for (Long userId : mergedSet) {
+      if (!invitedUser.contains(userId)) {
+        Participant participant = new Participant(boardId, userId);
         participantRepository.save(participant);
       }
     }
@@ -121,10 +135,22 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   @Transactional
-  public void deleteBoard(Long boardId, String username) {
+  public void deleteUser(Long boardId, UserInviteRequestDto req, String username) {
     User user = userService.findUser(username);
     validateUser(user, boardId);
+
+    List<Long> deletingUserIds = req.getInvitingList();
+
+    // 한 번의 쿼리로 여러 사용자 삭제
+    participantRepository.deleteByBoardIdAndUserIdIn(boardId, deletingUserIds);
+  }
+
+  @Override
+  @Transactional
+  public void deleteBoard(Long boardId, String username) {
     Board board = validateBoard(boardId);
+    User user = userService.findUser(username);
+    validateUser(user, boardId);
     board.softDelete();
   }
 
@@ -133,7 +159,6 @@ public class BoardServiceImpl implements BoardService {
     if (!userList.contains(user.getId())) {
       throw new IllegalStateException("보드 권한이 있는 유저가 아닙니다.");
     }
-    ;
   }
 
   private Board validateBoard(Long boardId) {

@@ -19,4 +19,6 @@ public interface BoardService {
   void inviteUser(Long boardId, UserInviteRequestDto req, String username);
 
   void deleteBoard(Long boardId, String user);
+
+  void deleteUser(Long boardId, UserInviteRequestDto req, String username);
 }

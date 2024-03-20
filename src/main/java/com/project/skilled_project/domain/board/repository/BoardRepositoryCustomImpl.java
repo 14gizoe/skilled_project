@@ -2,7 +2,7 @@ package com.project.skilled_project.domain.board.repository;
 
 import static com.project.skilled_project.domain.board.entity.QBoard.board;
 import static com.project.skilled_project.domain.card.entity.QCard.card;
-import static com.project.skilled_project.domain.column.entity.QColumns.columns;
+import static com.project.skilled_project.domain.columns.entity.QColumns.columns;
 
 import com.project.skilled_project.domain.board.dto.response.BoardResponseDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsDto;
@@ -42,7 +42,7 @@ public class BoardRepositoryCustomImpl implements BoardRepositoryCustom {
         .leftJoin(columns)
         .on(board.id.eq(columns.boardId))
         .leftJoin(card)
-        .on(columns.id.eq(card.columnId))
+        .on(columns.columnsId.eq(card.columnId))
         .where(board.id.eq(boardId))
         .fetch();
   }
