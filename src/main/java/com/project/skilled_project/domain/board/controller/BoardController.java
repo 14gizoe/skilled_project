@@ -29,16 +29,18 @@ public class BoardController {
   @PostMapping
   public void createBoard(
       @RequestBody BoardRequestDto req,
-      UserDetailsImpl userDetails
+      UserDetails userDetails
   ) {
-    boardService.createBoard(req, userDetails.getUser());
+    boardService.createBoard(req, userDetails.getUsername());
   }
 
   @GetMapping
-  public ResponseEntity<CommonResponse<BoardsResponseDto>> getBoards() {
+  public ResponseEntity<CommonResponse<BoardsResponseDto>> getBoards(
+      UserDetails userDetails
+  ) {
     return ResponseEntity.ok().body(
         CommonResponse.<BoardsResponseDto>builder()
-            .data(boardService.getBoards())
+            .data(boardService.getBoards(userDetails.getUsername()))
             .build()
     );
   }
@@ -46,46 +48,38 @@ public class BoardController {
   @GetMapping("/{boardId}")
   public ResponseEntity<CommonResponse<BoardDto>> getBoard(
       @PathVariable Long boardId,
-      UserDetailsImpl userDetails
+      UserDetails userDetails
   ) {
     return ResponseEntity.ok().body(
         CommonResponse.<BoardDto>builder()
-            .data(boardService.getBoard(boardId, userDetails.getUser()))
+            .data(boardService.getBoard(boardId, userDetails.getUsername()))
             .build()
     );
   }
 
   @PutMapping("/{boardId}")
-  public ResponseEntity<CommonResponse<Void>> updateBoard(
+  public void updateBoard(
       @PathVariable Long boardId,
       @RequestBody BoardRequestDto req,
-      UserDetailsImpl userDetails
+      UserDetails userDetails
   ) {
-    boardService.updateBoard(boardId, req, userDetails.getUser());
-    return ResponseEntity.ok().body(
-        CommonResponse.<Void>builder().build()
-    );
+    boardService.updateBoard(boardId, req, userDetails.getUsername());
   }
 
   @PutMapping("/{boardId}/invite")
-  public ResponseEntity<CommonResponse<Void>> inviteUser(
+  public void inviteUser(
       @PathVariable Long boardId,
-      @RequestBody UserInviteRequestDto req
+      @RequestBody UserInviteRequestDto req,
+      UserDetails userDetails
   ) {
-    boardService.inviteUser(boardId, req);
-    return ResponseEntity.ok().body(
-        CommonResponse.<Void>builder().build()
-    );
+    boardService.inviteUser(boardId, req, userDetails.getUsername());
   }
 
   @DeleteMapping("/{boardId}")
-  public ResponseEntity<CommonResponse<Void>> deleteBoard(
+  public void deleteBoard(
       @PathVariable Long boardId,
-      UserDetailsImpl userDetails
+      UserDetails userDetails
   ) {
-    boardService.deleteBoard(boardId, userDetails.getUser());
-    return ResponseEntity.ok().body(
-        CommonResponse.<Void>builder().build()
-    );
+    boardService.deleteBoard(boardId, userDetails.getUsername());
   }
 }

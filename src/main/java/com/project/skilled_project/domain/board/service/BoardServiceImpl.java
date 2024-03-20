@@ -13,6 +13,7 @@ import com.project.skilled_project.domain.board.entity.Participant;
 import com.project.skilled_project.domain.board.repository.BoardRepository;
 import com.project.skilled_project.domain.board.repository.ParticipantRepository;
 import com.project.skilled_project.domain.user.entity.User;
+import com.project.skilled_project.domain.user.service.UserService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,17 +33,20 @@ public class BoardServiceImpl implements BoardService {
 
   private final BoardRepository boardRepository;
   private final ParticipantRepository participantRepository;
+  private final UserService userService;
 
   @Override
   @Transactional
-  public void createBoard(BoardRequestDto req, User user) {
+  public void createBoard(BoardRequestDto req, String username) {
+    User user = userService.findUser(username);
     Board board = new Board(req, user);
-    Long id = boardRepository.save(board).getId();
-    log.info(id+"");
+    boardRepository.save(board);
   }
 
   @Override
-  public BoardsResponseDto getBoards() {
+  public BoardsResponseDto getBoards(String username) {
+//    User user = userService.findUser(username);
+//    validateUser(user, boardId);
     List<BoardsDto> boardsList = boardRepository.getBoards();
     BoardsResponseDto boardsResponseDto = new BoardsResponseDto();
     for (BoardsDto boardsDto : boardsList) {
@@ -52,7 +56,9 @@ public class BoardServiceImpl implements BoardService {
   }
 
   @Override
-  public BoardDto getBoard(Long boardId, User user) {
+  public BoardDto getBoard(Long boardId, String username) {
+    User user = userService.findUser(username);
+    validateUser(user, boardId);
     List<BoardResponseDto> boardList = boardRepository.getBoard(boardId);
 
     String title = boardList.get(0).getBoardTitle();
@@ -92,7 +98,8 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   @Transactional
-  public void updateBoard(Long boardId, BoardRequestDto req, User user) {
+  public void updateBoard(Long boardId, BoardRequestDto req, String username) {
+    User user = userService.findUser(username);
     validateUser(user, boardId);
     Board board = validateBoard(boardId);
     board.update(req);
@@ -100,12 +107,12 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   @Transactional
-  public void inviteUser(Long boardId, UserInviteRequestDto req) {
+  public void inviteUser(Long boardId, UserInviteRequestDto req, String username) {
     Participant participant;
     List<Long> userList = participantRepository.findAllByBoardId(boardId);
     Set<Long> set = new HashSet<>(userList);
     for (Long id : userList) {
-      if(!set.contains(id)){
+      if (!set.contains(id)) {
         participant = new Participant(boardId, id);
         participantRepository.save(participant);
       }
@@ -114,7 +121,8 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   @Transactional
-  public void deleteBoard(Long boardId, User user) {
+  public void deleteBoard(Long boardId, String username) {
+    User user = userService.findUser(username);
     validateUser(user, boardId);
     Board board = validateBoard(boardId);
     board.softDelete();
@@ -122,9 +130,10 @@ public class BoardServiceImpl implements BoardService {
 
   private void validateUser(User user, Long boardId) {
     List<Long> userList = participantRepository.findAllByBoardId(boardId);
-    if(!userList.contains(user.getId())){
+    if (!userList.contains(user.getId())) {
       throw new IllegalStateException("보드 권한이 있는 유저가 아닙니다.");
-    };
+    }
+    ;
   }
 
   private Board validateBoard(Long boardId) {
