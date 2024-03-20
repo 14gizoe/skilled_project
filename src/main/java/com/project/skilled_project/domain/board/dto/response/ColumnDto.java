@@ -1,19 +1,17 @@
 package com.project.skilled_project.domain.board.dto.response;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BoardsResponseDto {
+public class ColumnDto {
 
-  private List<String> boardTitle = new ArrayList<>();
-
-  public void boardTitleUpdate(String title) {
-    boardTitle.add(title);
-  }
+  private String title;
+  private List<CardDto> cards;
 }

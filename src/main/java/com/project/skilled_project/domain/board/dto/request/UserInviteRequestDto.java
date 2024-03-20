@@ -5,5 +5,6 @@ import lombok.Getter;
 
 @Getter
 public class UserInviteRequestDto {
-  private List<String> invitingList;
+
+  private List<Long> invitingList;
 }

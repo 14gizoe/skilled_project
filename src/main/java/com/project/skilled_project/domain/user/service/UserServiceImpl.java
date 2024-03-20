@@ -3,20 +3,17 @@ package com.project.skilled_project.domain.user.service;
 import com.project.skilled_project.domain.user.entity.User;
 import com.project.skilled_project.domain.user.repository.RefreshTokenRepository;
 import com.project.skilled_project.domain.user.repository.UserRepository;
-import com.project.skilled_project.domain.user.repository.UserRepositoryQuery;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final RefreshTokenRepository refreshTokenRepository;
@@ -41,9 +38,7 @@ public class UserServiceImpl implements UserService{
   @Override
   @Transactional
   public void updateUser(String email, String username, String password, String verifiedUser) {
-    User user = userRepository.findByUsername(verifiedUser).orElseThrow(() ->
-      new UsernameNotFoundException("존재하지 않는 유저입니다.")
-    );
+    User user = findUser(verifiedUser);
 
     if (userRepository.existsByEmailOrUsername(email, username)) {
       throw new IllegalArgumentException("존재하는 계정입니다.");
@@ -62,5 +57,13 @@ public class UserServiceImpl implements UserService{
     );
 
     user.delete(UUID.randomUUID().toString());
+  }
+
+  @Override
+  public User findUser(String username) {
+    User user = userRepository.findByUsername(username).orElseThrow(() ->
+        new UsernameNotFoundException("존재하지 않는 유저입니다.")
+    );
+    return user;
   }
 }
