@@ -43,6 +43,4 @@ public class CommentServiceImpl implements CommentService {
 
     comment.delete();
   }
-
-
 }
