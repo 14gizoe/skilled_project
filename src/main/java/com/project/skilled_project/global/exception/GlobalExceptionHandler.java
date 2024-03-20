@@ -11,29 +11,36 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 @Slf4j(topic = "GlobalExceptionHandler -> ")
 public class GlobalExceptionHandler {
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public void methodArgumentNotValidException(
-        MethodArgumentNotValidException e
-    ) {
 
-        log.error("MethodArgumentNotValidException: ", e);
-    }
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public void methodArgumentNotValidException(
+      MethodArgumentNotValidException e
+  ) {
 
-    @ExceptionHandler(DuplicateException.class)
-    public ResponseEntity<ErrorResponse> duplicateException(DuplicateException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
+    log.error("MethodArgumentNotValidException: ", e);
+  }
 
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<ErrorResponse> duplicateException(IllegalStateException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
+  @ExceptionHandler(DuplicateException.class)
+  public ResponseEntity<ErrorResponse> duplicateException(DuplicateException e) {
+    ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ErrorResponse> duplicateException(NullPointerException e) {
-        ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
-    }
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<ErrorResponse> illegalArgumentException(IllegalArgumentException e) {
+    ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> duplicateException(IllegalStateException e) {
+    ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(NullPointerException.class)
+  public ResponseEntity<ErrorResponse> duplicateException(NullPointerException e) {
+    ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 }

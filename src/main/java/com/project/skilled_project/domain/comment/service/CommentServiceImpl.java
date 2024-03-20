@@ -2,6 +2,7 @@ package com.project.skilled_project.domain.comment.service;
 
 import com.project.skilled_project.domain.comment.entity.Comment;
 import com.project.skilled_project.domain.comment.repository.CommentRepository;
+import com.project.skilled_project.domain.comment.repository.CommentRepositoryQuery;
 import com.project.skilled_project.domain.user.entity.User;
 import com.project.skilled_project.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +11,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class CommentServiceImpl implements CommentSerivce {
+public class CommentServiceImpl implements CommentService {
 
   private final CommentRepository commentRepository;
+  private final CommentRepositoryQuery commentRepositoryQuery;
   private final UserService userService;
 
   @Override
@@ -24,5 +26,12 @@ public class CommentServiceImpl implements CommentSerivce {
     commentRepository.save(comment);
   }
 
+  @Override
+  @Transactional
+  public void updateComment(Long commentId, String content, String username) {
+    User user = userService.findUser(username);
+    Comment comment = commentRepositoryQuery.getComment(commentId, user.getId());
 
+    comment.update(content);
+  }
 }
