@@ -1,5 +1,6 @@
 package com.project.skilled_project.domain.user.service;
 
+import com.project.skilled_project.domain.file.service.FileService;
 import com.project.skilled_project.domain.user.entity.User;
 import com.project.skilled_project.domain.user.repository.RefreshTokenRepository;
 import com.project.skilled_project.domain.user.repository.UserRepository;
@@ -18,6 +19,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
   private final RefreshTokenRepository refreshTokenRepository;
   private final PasswordEncoder passwordEncoder;
+  private final FileService fileService;
 
   @Value("${defaultImage.path}")
   private String localPath;
@@ -45,7 +47,8 @@ public class UserServiceImpl implements UserService {
     }
 
     String encodedPassword = passwordEncoder.encode(password);
-    user.update(email, username, encodedPassword, localPath);
+    String filePath = fileService.getFilePath(user.getId(), "profile");
+    user.update(email, username, encodedPassword, filePath);
     refreshTokenRepository.delete(username);
   }
 

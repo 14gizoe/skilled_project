@@ -37,4 +37,10 @@ public class FileServiceImpl implements FileService {
   public byte[] download(String fileKey) throws IOException {
     return new byte[0];
   }
+
+  @Override
+  public String getFilePath(Long sourceId, String category) {
+    File file = fIleRepository.findBySourceIdAndCategory(sourceId, category);
+    return file.getFilePath();
+  }
 }

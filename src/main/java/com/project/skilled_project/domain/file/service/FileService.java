@@ -10,4 +10,6 @@ public interface FileService {
   List<FileResponseDto> upload(Long sourceId, String category, MultipartFile[] files) throws IOException;
 
   byte[] download(String fileKey) throws IOException;
+
+  String getFilePath(Long sourceId, String category);
 }
