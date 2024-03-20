@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -62,15 +63,19 @@ public class WorkerServiceImpl implements WorkerService {
     if (!card.getColumnId().equals(columnId)) {
       throw new IllegalArgumentException("컬럼번호 불일치");
     }
+
     Columns columns = columnsRepository.findById(columnId).orElseThrow(
         ()-> new EntityNotFoundException("해당 컬럼없음")
     );
+
     if (!columns.getBoardId().equals(boardId)) {
       throw new IllegalArgumentException("보드번호 불일치");
     }
-    Board board = boardRepository.findById(boardId).orElseThrow(
-        () -> new EntityNotFoundException("해당 보드없음")
-    );
+
+    Optional<Board> board = boardRepository.findById(boardId);
+    if (board.isEmpty()) {
+      throw new IllegalArgumentException("보드 없음");
+    }
   }
 
   private List<Long> getAlreadyWorkerIds(Long cardId) {
@@ -90,6 +95,7 @@ public class WorkerServiceImpl implements WorkerService {
       if (!participantIdSet.contains(userId)) {
         throw new IllegalArgumentException("올바르지 않은 입력이 들어옴");
       }
+
       if (alreadyWorkerIdSet.contains(userId)) {
         continue;
       }
