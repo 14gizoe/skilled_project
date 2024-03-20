@@ -40,7 +40,7 @@ public class WorkerServiceImpl implements WorkerService {
     checkValidCard(boardId, columnId, cardId);
 
     List<Long> alreadyWorkerIds = getAlreadyWorkerIds(cardId);
-    List<Long> participantIds = getPaticipantIds(boardId);
+    List<Long> participantIds = getParticipantIds(boardId);
     addWorkersHelper(workerRequestDto.getUserIdList(), participantIds, alreadyWorkerIds, cardId);
   }
 
@@ -82,7 +82,7 @@ public class WorkerServiceImpl implements WorkerService {
     return workerRepository.findAllUserIdByCardId(cardId);
   }
 
-  private List<Long> getPaticipantIds(Long boardId) {
+  private List<Long> getParticipantIds(Long boardId) {
     return participantRepository.findAllByBoardId(boardId);
   }
 
