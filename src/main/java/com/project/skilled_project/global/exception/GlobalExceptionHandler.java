@@ -31,4 +31,16 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
   }
+
+  @ExceptionHandler(IllegalStateException.class)
+  public ResponseEntity<ErrorResponse> duplicateException(IllegalStateException e) {
+    ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
+
+  @ExceptionHandler(NullPointerException.class)
+  public ResponseEntity<ErrorResponse> duplicateException(NullPointerException e) {
+    ErrorResponse errorResponse = new ErrorResponse(e.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+  }
 }

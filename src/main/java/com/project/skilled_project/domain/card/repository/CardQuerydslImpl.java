@@ -4,7 +4,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CardQuerydslImpl implements CardQuerydsl{
+public class CardQuerydslImpl implements CardQuerydsl {
+
   private final JPAQueryFactory jpaQueryFactory;
 
 }
