@@ -1,6 +1,8 @@
 package com.project.skilled_project.domain.card.service;
 
 
-public interface CardService {
+import com.project.skilled_project.domain.card.dto.request.CardCreateRequestDto;
 
+public interface CardService {
+  void createCard(CardCreateRequestDto cardCreateRequestDto);
 }
