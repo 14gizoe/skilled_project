@@ -9,10 +9,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class BoardDto {
 
   private String title;
   private String color;
   private List<ColumnDto> columns;
+
+  public BoardDto(String title, String color, List<ColumnDto> columnDtoList) {
+    this.title = title;
+    this.color = color;
+    this.columns = columnDtoList;
+  }
 }

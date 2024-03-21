@@ -1,5 +1,6 @@
 package com.project.skilled_project.domain.board.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.project.skilled_project.domain.board.dto.request.BoardRequestDto;
 import com.project.skilled_project.domain.board.dto.request.UserInviteRequestDto;
 import com.project.skilled_project.domain.board.dto.response.BoardDto;
@@ -70,11 +71,12 @@ public class BoardServiceImpl implements BoardService {
     validateUser(user, boardId);
     List<BoardResponseDto> boardList = boardRepository.getBoard(boardId);
 
-    String title = boardList.get(0).getBoardTitle();
-    String color = boardList.get(0).getBoardColor();
-
-    List<ColumnDto> columnDtoList = mapppingBoard(
-        boardList);
+    BoardResponseDto firstBoard = boardList.stream()
+        .findFirst()
+        .orElseThrow(() -> new NotFoundException("Board not found"));
+    String title = firstBoard.getBoardTitle();
+    String color = firstBoard.getBoardColor();
+    List<ColumnDto> columnDtoList = mapppingBoard(boardList);
     return new BoardDto(title, color, columnDtoList);
   }
 
