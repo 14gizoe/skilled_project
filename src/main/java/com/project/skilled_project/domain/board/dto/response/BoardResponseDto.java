@@ -13,7 +13,6 @@ public class BoardResponseDto {
 
   private String boardTitle;
   private String boardColor;
-  //  private List<String> invitedUsers;
   private Columns columns;
   private Card card;
 }
