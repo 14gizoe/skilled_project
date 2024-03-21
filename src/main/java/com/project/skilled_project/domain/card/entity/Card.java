@@ -37,7 +37,7 @@ public class Card extends Timestamp {
   private String description;
   @Column(nullable = false)
   private String color = "#FFFFFF";
-  private Long userCount = 0L;
+  private Long workerCount = 0L;
   private Long fileCount = 0L;
   private Long commentCount = 0L;
   private LocalDateTime startDate;

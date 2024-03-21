@@ -16,7 +16,7 @@ public class CardDetailsResponseDto {
   private String title;
   private String description;
   private String color;
-  private Long userCount;
+  private Long workerCount;
   private Long fileCount;
   private Long commentCount;
   private LocalDateTime startDate;
@@ -33,7 +33,7 @@ public class CardDetailsResponseDto {
     this.title = card.getTitle();
     this.description = card.getDescription();
     this.color = card.getColor();
-    this.userCount = card.getUserCount();
+    this.workerCount = card.getWorkerCount();
     this.fileCount = card.getFileCount();
     this.commentCount = card.getCommentCount();
     this.startDate = card.getStartDate();

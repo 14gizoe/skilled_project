@@ -9,7 +9,7 @@ public class CardResponseDto {
   private String title;
   private String description;
   private String color;
-  private Long userCount;
+  private Long workerCount;
   private Long fileCount;
   private Long commentCount;
   private LocalDateTime startDate;
@@ -20,7 +20,7 @@ public class CardResponseDto {
       String title,
       String description,
       String color,
-      Long userCount,
+      Long workerCount,
       Long fileCount,
       Long commentCount,
       LocalDateTime startDate,
@@ -30,7 +30,7 @@ public class CardResponseDto {
     this.title = title;
     this.description = description;
     this.color = color;
-    this.userCount = userCount;
+    this.workerCount = workerCount;
     this.fileCount = fileCount;
     this.commentCount = commentCount;
     this.startDate = startDate;

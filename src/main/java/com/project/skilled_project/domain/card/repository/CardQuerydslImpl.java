@@ -60,7 +60,7 @@ public class CardQuerydslImpl implements CardQuerydsl {
     return jpaQueryFactory
         .select(Projections.constructor(CardResponseDto.class,
             card.id, card.title, card.description, card.color,
-            card.userCount, card.fileCount, card.commentCount, card.startDate, card.endDate)
+            card.workerCount, card.fileCount, card.commentCount, card.startDate, card.endDate)
         )
         .from(card)
         .fetch();
