@@ -56,6 +56,11 @@ public class WorkerServiceImpl implements WorkerService {
     deleteWorkersHelper(workerRequestDto.getUserIdList(), alreadyWorkerIds);
   }
 
+  @Override
+  public List<Long> findAllUserIdByCardId(Long cardId) {
+    return workerRepository.findAllUserIdByCardId(cardId);
+  }
+
   private void checkValidCard(Long boardId, Long columnId, Long cardId) {
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("해당 카드없음")
