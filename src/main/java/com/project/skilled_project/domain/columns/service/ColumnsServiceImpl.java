@@ -5,6 +5,7 @@ import com.project.skilled_project.domain.columns.dto.request.ColumnsCreateReque
 import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameRequestDto;
 import com.project.skilled_project.domain.columns.entity.Columns;
 import com.project.skilled_project.domain.columns.repository.ColumnsRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -89,4 +90,12 @@ public class ColumnsServiceImpl implements ColumnsService {
     columns.changePositionColumns(positionStack.poll());
 
   }
+
+  @Override
+  public Columns findColumns(Long columnsId){
+    return columnsRepository.findById(columnsId).orElseThrow(
+        ()-> new EntityNotFoundException("컬럼 없음")
+    );
+  }
+
 }
