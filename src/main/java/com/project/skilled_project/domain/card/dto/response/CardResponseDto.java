@@ -1,5 +1,6 @@
 package com.project.skilled_project.domain.card.dto.response;
 
+import com.project.skilled_project.domain.card.entity.Card;
 import java.time.LocalDateTime;
 import lombok.Getter;
 
@@ -15,22 +16,15 @@ public class CardResponseDto {
   private LocalDateTime endDate;
 
   public CardResponseDto(
-      Long cardId,
-      String title,
-      String color,
-      Long workerCount,
-      Long fileCount,
-      Long commentCount,
-      LocalDateTime startDate,
-      LocalDateTime endDate
+      Card card
   ) {
-    this.cardId = cardId;
-    this.title = title;
-    this.color = color;
-    this.workerCount = workerCount;
-    this.fileCount = fileCount;
-    this.commentCount = commentCount;
-    this.startDate = startDate;
-    this.endDate = endDate;
+    this.cardId = card.getId();
+    this.title = card.getTitle();
+    this.color = card.getColor();
+    this.workerCount = card.getWorkerCount();
+    this.fileCount = card.getFileCount();
+    this.commentCount = card.getCommentCount();
+    this.startDate = card.getStartDate();
+    this.endDate = card.getEndDate();
   }
 }

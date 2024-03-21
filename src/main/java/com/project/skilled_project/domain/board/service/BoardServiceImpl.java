@@ -4,17 +4,15 @@ import com.project.skilled_project.domain.board.dto.request.BoardRequestDto;
 import com.project.skilled_project.domain.board.dto.request.UserInviteRequestDto;
 import com.project.skilled_project.domain.board.dto.response.BoardDto;
 import com.project.skilled_project.domain.board.dto.response.BoardResponseDto;
-import com.project.skilled_project.domain.board.dto.response.BoardsDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsResponseDto;
-import com.project.skilled_project.domain.board.dto.response.CardDto;
 import com.project.skilled_project.domain.board.dto.response.ColumnDto;
 import com.project.skilled_project.domain.board.dto.response.UserDto;
 import com.project.skilled_project.domain.board.entity.Board;
 import com.project.skilled_project.domain.board.entity.Participant;
 import com.project.skilled_project.domain.board.repository.BoardRepository;
 import com.project.skilled_project.domain.board.repository.ParticipantRepository;
+import com.project.skilled_project.domain.card.dto.response.CardResponseDto;
 import com.project.skilled_project.domain.user.entity.User;
-import com.project.skilled_project.domain.user.service.UserService;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -23,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -93,7 +90,7 @@ public class BoardServiceImpl implements BoardService {
 
   private List<ColumnDto> mapppingBoard(List<BoardResponseDto> boardList) {
     Map<Long, ColumnDto> columnDtoMap = new HashMap<>();
-    Map<Long, List<CardDto>> cardDtoMap = new HashMap<>();
+    Map<Long, List<CardResponseDto>> cardDtoMap = new HashMap<>();
 
     for (BoardResponseDto dto : boardList) {
       if (dto.getColumns() != null) {
@@ -104,7 +101,7 @@ public class BoardServiceImpl implements BoardService {
         }
 
         if (dto.getCard() != null) {
-          cardDtoMap.get(columnId).add(new CardDto(
+          cardDtoMap.get(columnId).add(new CardResponseDto(
               dto.getCard()
           ));
         }
@@ -113,7 +110,7 @@ public class BoardServiceImpl implements BoardService {
 
     for (Map.Entry<Long, ColumnDto> entry : columnDtoMap.entrySet()) {
       Long columnId = entry.getKey();
-      List<CardDto> cards = cardDtoMap.get(columnId);
+      List<CardResponseDto> cards = cardDtoMap.get(columnId);
       entry.getValue().setCards(cards);
     }
 
