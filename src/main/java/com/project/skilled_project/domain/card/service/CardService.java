@@ -23,6 +23,6 @@ public interface CardService {
 
   List<CardResponseDto> getCards();
 
-  void CommentCountUp(Long cardId);
-  void CommentCountDown(Long cardId);
+  void commentCountUp(Long cardId);
+  void commentCountDown(Long cardId);
 }
