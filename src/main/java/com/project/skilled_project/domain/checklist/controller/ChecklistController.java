@@ -1,6 +1,6 @@
 package com.project.skilled_project.domain.checklist.controller;
 
-import com.project.skilled_project.domain.checklist.dto.ChecklistDto;
+import com.project.skilled_project.domain.checklist.dto.request.ChecklistRequestDto;
 import com.project.skilled_project.domain.checklist.service.ChecklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,8 +19,8 @@ public class ChecklistController {
   private final ChecklistService checklistService;
 
   @PostMapping
-  public void createChecklist(@RequestBody ChecklistDto checkListDto) {
-    checklistService.createCheckList(checkListDto);
+  public void createChecklist(@RequestBody ChecklistRequestDto checkListRequestDto) {
+    checklistService.createCheckList(checkListRequestDto);
   }
 
   @DeleteMapping("/{checklistId}")
