@@ -50,6 +50,7 @@ public class CardQuerydslImpl implements CardQuerydsl {
         .from(QComment.comment)
         .join(QUser.user)
         .on(QComment.comment.userId.eq(QUser.user.id))
+        .where(QComment.comment.cardId.eq(cardId))
         .fetch();
 
     return new CardDetailsResponseDto(card, workers, checklists, comments);
