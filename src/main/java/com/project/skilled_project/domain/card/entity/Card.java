@@ -60,4 +60,11 @@ public class Card extends Timestamp {
     this.startDate = cardUpdateDateRequestDto.getStartDate();
     this.endDate = cardUpdateDateRequestDto.getEndDate();
   }
+
+  public void commentCountUp() {
+    ++commentCount;
+  }
+  public void commentCountDown() {
+    --commentCount;
+  }
 }

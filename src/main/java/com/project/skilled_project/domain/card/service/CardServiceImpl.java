@@ -100,6 +100,22 @@ public class CardServiceImpl implements CardService{
     );
   }
 
+  @Override
+  public void commentCountUp(Long cardId) {
+    Card card = cardRepository.findById(cardId).orElseThrow(
+        () -> new EntityNotFoundException("카드 없음")
+    );
+    card.commentCountUp();
+  }
+
+  @Override
+  public void commentCountDown(Long cardId) {
+    Card card = cardRepository.findById(cardId).orElseThrow(
+        () -> new EntityNotFoundException("카드 없음")
+    );
+    card.commentCountDown();
+  }
+
   private boolean isWorkernotInCard(Long userId, Long cardId) {
     List<Long> workerIds = workerService.findAllUserIdByCardId(cardId);
     for (Long workerId : workerIds) {

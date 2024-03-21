@@ -5,8 +5,6 @@ import com.project.skilled_project.domain.card.service.CardService;
 import com.project.skilled_project.domain.comment.entity.Comment;
 import com.project.skilled_project.domain.comment.repository.CommentRepository;
 import com.project.skilled_project.domain.comment.repository.CommentRepositoryQuery;
-import com.project.skilled_project.domain.user.entity.User;
-import com.project.skilled_project.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +23,7 @@ public class CommentServiceImpl implements CommentService {
     Card card = cardService.findCardById(cardId);
     Comment comment = new Comment(content, card.getId(), userId);
     commentRepository.save(comment);
+    cardService.commentCountUp(cardId);
   }
 
   @Override
@@ -41,5 +40,6 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepositoryQuery.getComment(commentId, userId);
 
     comment.delete();
+    cardService.commentCountDown(comment.getCardId());
   }
 }

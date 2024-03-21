@@ -22,4 +22,7 @@ public interface CardService {
   Card findCardById(Long cardId);
 
   List<CardResponseDto> getCards();
+
+  void commentCountUp(Long cardId);
+  void commentCountDown(Long cardId);
 }
