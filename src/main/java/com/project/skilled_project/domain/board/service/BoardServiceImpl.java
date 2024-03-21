@@ -78,7 +78,7 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   public Board findBoard(Long boardId) {
-    return boardRepository.findById(boardId).orElseThrow(() -> new NullPointerException("보드가 존재하지 않습니다."));
+    return boardRepository.findById(boardId).orElseThrow(() -> new NullPointerException("보드가 존재하지 않음"));
   }
 
   private List<ColumnDto> mapppingBoard(List<BoardResponseDto> boardList) {
