@@ -1,7 +1,7 @@
 package com.project.skilled_project.domain.checklist.service;
 
 import com.project.skilled_project.domain.card.repository.CardRepository;
-import com.project.skilled_project.domain.checklist.dto.ChecklistDto;
+import com.project.skilled_project.domain.checklist.dto.request.ChecklistRequestDto;
 import com.project.skilled_project.domain.checklist.entity.Checklist;
 import com.project.skilled_project.domain.checklist.repository.ChecklistRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,10 +18,10 @@ public class ChecklistServiceImpl implements ChecklistService {
   private final CardRepository cardRepository;
 
   @Override
-  public void createCheckList(ChecklistDto checkListDto) {
-    Checklist checklist = new Checklist(checkListDto);
+  public void createCheckList(ChecklistRequestDto checkListRequestDto) {
+    Checklist checklist = new Checklist(checkListRequestDto);
     cardRepository
-        .findById(checkListDto.getCardId())
+        .findById(checkListRequestDto.getCardId())
         .orElseThrow(() -> new EntityNotFoundException("Card not found"));
     checklistRepository.save(checklist);
   }

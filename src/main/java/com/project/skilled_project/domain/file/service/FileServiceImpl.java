@@ -20,26 +20,31 @@ public class FileServiceImpl implements FileService {
 
   @Override
   @Transactional
-  public List<FileResponseDto> upload(Long sourceId, String category, MultipartFile[] files) {
+  public List<FileResponseDto> upload(Long sourceId, String category, List<MultipartFile> files) {
     List<FileResponseDto> fileResponseList = new ArrayList<>();
     for (MultipartFile file : files) {
       String filePath = s3Service.uploadFile(file, category);
-      String orifinalFileName = file.getOriginalFilename();
-      File saveFile = new File(sourceId, category, orifinalFileName, filePath);
+      String originalFileName = file.getOriginalFilename();
+      File saveFile = new File(sourceId, category, originalFileName, filePath);
       fIleRepository.save(saveFile);
-      fileResponseList.add(new FileResponseDto(sourceId, category, orifinalFileName, filePath));
+      fileResponseList.add(new FileResponseDto(sourceId, category, originalFileName, filePath));
     }
     return fileResponseList;
   }
 
   @Override
-  public byte[] download(String fileKey) throws IOException {
-    return new byte[0];
+  public String download(String filePath) {
+    return s3Service.downloadFile(filePath);
   }
 
   @Override
   public String getFilePath(Long sourceId, String category) {
     File file = fIleRepository.findBySourceIdAndCategory(sourceId, category);
     return file.getFilePath();
+  }
+
+  @Override
+  public void delete(String filePath) {
+    s3Service.deleteFile(filePath);
   }
 }

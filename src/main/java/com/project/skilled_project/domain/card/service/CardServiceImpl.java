@@ -1,14 +1,16 @@
 package com.project.skilled_project.domain.card.service;
 
 import com.project.skilled_project.domain.board.entity.Board;
-import com.project.skilled_project.domain.board.repository.BoardRepository;
+import com.project.skilled_project.domain.board.service.BoardService;
 import com.project.skilled_project.domain.card.dto.request.CardCreateRequestDto;
 import com.project.skilled_project.domain.card.dto.request.CardUpdateDateRequestDto;
 import com.project.skilled_project.domain.card.dto.request.CardUpdateRequestDto;
+import com.project.skilled_project.domain.card.dto.response.CardDetailsResponseDto;
+import com.project.skilled_project.domain.card.dto.response.CardResponseDto;
 import com.project.skilled_project.domain.card.entity.Card;
 import com.project.skilled_project.domain.card.repository.CardRepository;
 import com.project.skilled_project.domain.columns.entity.Columns;
-import com.project.skilled_project.domain.columns.repository.ColumnsRepository;
+import com.project.skilled_project.domain.columns.service.ColumnsService;
 import com.project.skilled_project.domain.user.entity.User;
 import com.project.skilled_project.domain.user.service.UserService;
 import com.project.skilled_project.domain.worker.service.WorkerService;
@@ -26,19 +28,28 @@ public class CardServiceImpl implements CardService{
 
   private final UserService userService;
   private final WorkerService workerService;
-  private final ColumnsRepository columnsRepository;
-  private final BoardRepository boardRepository;
+  private final ColumnsService columnsService;
+  private final BoardService boardService;
 
   @Override
   public void createCard(CardCreateRequestDto cardCreateRequestDto) {
-    Columns columns = columnsRepository.findById(cardCreateRequestDto.getColumnId()).orElseThrow(
-        () -> new EntityNotFoundException("컬럼 없음")
-    );
-    Board board = boardRepository.findById(cardCreateRequestDto.getBoardId()).orElseThrow(
-        () -> new EntityNotFoundException("보드 없음")
-    );
+    Columns columns = columnsService.findColumns(cardCreateRequestDto.getColumnId());
+    Board board = boardService.findBoard(cardCreateRequestDto.getBoardId());
     Card card = new Card(cardCreateRequestDto);
     cardRepository.save(card);
+  }
+
+  @Override
+  public CardDetailsResponseDto getCard(Long cardId) {
+    Card card = cardRepository.findById(cardId).orElseThrow(
+        () -> new EntityNotFoundException("카드 없음")
+    );
+    return cardRepository.getQueryCard(cardId);
+  }
+
+  @Override
+  public List<CardResponseDto> getCards() {
+    return cardRepository.getQueryCards();
   }
 
   @Override
@@ -87,6 +98,22 @@ public class CardServiceImpl implements CardService{
     return  cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
+  }
+
+  @Override
+  public void CommentCountUp(Long cardId) {
+    Card card = cardRepository.findById(cardId).orElseThrow(
+        () -> new EntityNotFoundException("카드 없음")
+    );
+    card.commentCountUp();
+  }
+
+  @Override
+  public void CommentCountDown(Long cardId) {
+    Card card = cardRepository.findById(cardId).orElseThrow(
+        () -> new EntityNotFoundException("카드 없음")
+    );
+    card.commentCountDown();
   }
 
   private boolean isWorkernotInCard(Long userId, Long cardId) {

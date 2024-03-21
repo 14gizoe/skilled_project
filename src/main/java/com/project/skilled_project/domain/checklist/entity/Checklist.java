@@ -1,7 +1,7 @@
 package com.project.skilled_project.domain.checklist.entity;
 
 
-import com.project.skilled_project.domain.checklist.dto.ChecklistDto;
+import com.project.skilled_project.domain.checklist.dto.request.ChecklistRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,9 +25,9 @@ public class Checklist {
   @Column(nullable = false)
   Long cardId;
 
-  public Checklist(ChecklistDto checkListDto) {
-    this.cardId = checkListDto.getCardId();
-    this.content = checkListDto.getContent();
+  public Checklist(ChecklistRequestDto checkListRequestDto) {
+    this.cardId = checkListRequestDto.getCardId();
+    this.content = checkListRequestDto.getContent();
   }
 
   public void toggle() {

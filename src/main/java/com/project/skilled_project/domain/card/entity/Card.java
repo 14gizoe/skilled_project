@@ -37,7 +37,7 @@ public class Card extends Timestamp {
   private String description;
   @Column(nullable = false)
   private String color = "#FFFFFF";
-  private Long userCount = 0L;
+  private Long workerCount = 0L;
   private Long fileCount = 0L;
   private Long commentCount = 0L;
   private LocalDateTime startDate;
@@ -59,5 +59,12 @@ public class Card extends Timestamp {
   public void updateDate(CardUpdateDateRequestDto cardUpdateDateRequestDto) {
     this.startDate = cardUpdateDateRequestDto.getStartDate();
     this.endDate = cardUpdateDateRequestDto.getEndDate();
+  }
+
+  public void commentCountUp() {
+    ++commentCount;
+  }
+  public void commentCountDown() {
+    --commentCount;
   }
 }
