@@ -4,6 +4,7 @@ import com.project.skilled_project.domain.user.dto.SignupRequestDto;
 import com.project.skilled_project.domain.user.dto.UserDto;
 import com.project.skilled_project.domain.user.service.UserService;
 import com.project.skilled_project.global.response.CommonResponse;
+import com.project.skilled_project.global.util.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,18 +33,18 @@ public class UserController {
   @PutMapping
   public ResponseEntity<CommonResponse<Void>> updateUser(
       @RequestBody UserDto userDto,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
     userService.updateUser(userDto.getEmail(), userDto.getUsername(), userDto.getPassword(),
-        userDetails.getUsername());
+        userDetails.getUser().getId());
     return CommonResponse.ok(null);
   }
 
   @DeleteMapping
   public ResponseEntity<CommonResponse<Void>> deleteUser(
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    userService.deleteUser(userDetails.getUsername());
+    userService.deleteUser(userDetails.getUser().getId());
     return CommonResponse.ok(null);
   }
 }
