@@ -6,7 +6,6 @@ import com.project.skilled_project.domain.board.dto.response.BoardDto;
 import com.project.skilled_project.domain.board.dto.response.BoardResponseDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsResponseDto;
 import com.project.skilled_project.domain.board.dto.response.ColumnDto;
-import com.project.skilled_project.domain.board.dto.response.UserDto;
 import com.project.skilled_project.domain.board.entity.Board;
 import com.project.skilled_project.domain.board.entity.Participant;
 import com.project.skilled_project.domain.board.repository.BoardRepository;
@@ -69,18 +68,14 @@ public class BoardServiceImpl implements BoardService {
   public BoardDto getBoard(Long boardId, User user) throws NotFoundException {
     validateUser(user, boardId);
     List<BoardResponseDto> boardList = boardRepository.getBoard(boardId);
-    List<UserDto> userList = participantRepository.getUsernames(boardId);
-    List<String> usernames = new ArrayList<>();
+    List<String> userList = participantRepository.getUsernames(boardId);
     BoardResponseDto firstBoard = boardList.stream()
         .findFirst()
         .orElseThrow(NotFoundException::new);
     String title = firstBoard.getBoardTitle();
     String color = firstBoard.getBoardColor();
-    for (UserDto userDto : userList) {
-      usernames.add(userDto.getUsername());
-    }
     List<ColumnDto> columnDtoList = mapppingBoard(boardList);
-    return new BoardDto(title, color, usernames, columnDtoList);
+    return new BoardDto(title, color, userList, columnDtoList);
   }
 
   @Override
