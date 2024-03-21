@@ -43,6 +43,7 @@ public class CardQuerydslImpl implements CardQuerydsl {
         .from(QChecklist.checklist)
         .join(QCard.card)
         .on(QCard.card.id.eq(QChecklist.checklist.cardId))
+        .where(QChecklist.checklist.cardId.eq(cardId))
         .fetch();
 
     List<CommentResponseDto> comments = jpaQueryFactory
