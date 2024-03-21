@@ -7,7 +7,6 @@ import lombok.Getter;
 public class CardResponseDto {
   private Long cardId;
   private String title;
-  private String description;
   private String color;
   private Long workerCount;
   private Long fileCount;
@@ -18,7 +17,6 @@ public class CardResponseDto {
   public CardResponseDto(
       Long cardId,
       String title,
-      String description,
       String color,
       Long workerCount,
       Long fileCount,
@@ -28,7 +26,6 @@ public class CardResponseDto {
   ) {
     this.cardId = cardId;
     this.title = title;
-    this.description = description;
     this.color = color;
     this.workerCount = workerCount;
     this.fileCount = fileCount;
