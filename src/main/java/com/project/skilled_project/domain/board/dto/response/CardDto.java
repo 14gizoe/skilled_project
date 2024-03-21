@@ -21,6 +21,6 @@ public class CardDto {
 
   public CardDto(Card card) {
     this.title = card.getTitle();
-    this.deadline = card.getDeadline();
+    this.deadline = card.getEndDate();
   }
 }
