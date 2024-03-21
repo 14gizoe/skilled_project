@@ -15,7 +15,6 @@ public class CommentServiceImpl implements CommentService {
 
   private final CommentRepository commentRepository;
   private final CommentRepositoryQuery commentRepositoryQuery;
-  private final UserService userService;
 
   @Override
   @Transactional
