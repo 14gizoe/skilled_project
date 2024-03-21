@@ -4,21 +4,23 @@ import com.project.skilled_project.domain.board.dto.request.BoardRequestDto;
 import com.project.skilled_project.domain.board.dto.request.UserInviteRequestDto;
 import com.project.skilled_project.domain.board.dto.response.BoardDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsResponseDto;
+import com.project.skilled_project.domain.user.entity.User;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 
 
 public interface BoardService {
 
-  void createBoard(BoardRequestDto req, String user);
+  void createBoard(BoardRequestDto req, User user);
 
-  BoardsResponseDto getBoards(String username);
+  BoardsResponseDto getBoards(User username);
 
-  BoardDto getBoard(Long boardId, String user);
+  BoardDto getBoard(Long boardId, User user) throws NotFoundException;
 
-  void updateBoard(Long boardId, BoardRequestDto req, String user);
+  void updateBoard(Long boardId, BoardRequestDto req, User user);
 
-  void inviteUser(Long boardId, UserInviteRequestDto req, String username);
+  void inviteUser(Long boardId, UserInviteRequestDto req, User username);
 
-  void deleteBoard(Long boardId, String user);
+  void deleteBoard(Long boardId, User user);
 
-  void deleteUser(Long boardId, UserInviteRequestDto req, String username);
+  void deleteUser(Long boardId, UserInviteRequestDto req, User username);
 }
