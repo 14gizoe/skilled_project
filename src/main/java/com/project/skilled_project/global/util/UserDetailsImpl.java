@@ -15,8 +15,8 @@ public class UserDetailsImpl implements UserDetails {
     this.user = user;
   }
 
-  public UserDetailsImpl(String username) {
-    this.user = new User(username);
+  public UserDetailsImpl(Long userId, String username) {
+    this.user = new User(userId, username);
   }
 
   @Override

@@ -6,9 +6,9 @@ public interface UserService {
 
   void signup(String email, String username, String password);
 
-  void updateUser(String email, String username, String password, String verifiedUser);
+  void updateUser(String email, String username, String password, Long userId);
 
-  void deleteUser(String username);
+  void deleteUser(Long userId);
 
-  User findUser(String username);
+  User findUser(Long userId);
 }

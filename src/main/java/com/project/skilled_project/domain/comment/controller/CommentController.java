@@ -4,6 +4,7 @@ import com.project.skilled_project.domain.comment.dto.CommentReqeustDto;
 import com.project.skilled_project.domain.comment.dto.CommentUpdateRequestDto;
 import com.project.skilled_project.domain.comment.service.CommentServiceImpl;
 import com.project.skilled_project.global.response.CommonResponse;
+import com.project.skilled_project.global.util.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,29 +27,30 @@ public class CommentController {
   @PostMapping
   public ResponseEntity<CommonResponse<Void>> createComment(
       @RequestBody CommentReqeustDto commentRequest,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
     commentService.createComment(commentRequest.getContent(), commentRequest.getCardId(),
-        userDetails.getUsername());
+        userDetails.getUser().getId());
     return CommonResponse.ok(null);
   }
 
   @PutMapping("/{commentId}")
   public ResponseEntity<CommonResponse<Void>> updateComment(
-    @PathVariable Long commentId,
-    @RequestBody CommentUpdateRequestDto commentRequest,
-    @AuthenticationPrincipal UserDetails userDetails
+      @PathVariable Long commentId,
+      @RequestBody CommentUpdateRequestDto commentRequest,
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    commentService.updateComment(commentId, commentRequest.getContent(), userDetails.getUsername());
+    commentService.updateComment(commentId, commentRequest.getContent(),
+        userDetails.getUser().getId());
     return CommonResponse.ok(null);
   }
 
   @DeleteMapping("/{commentId}")
   public ResponseEntity<CommonResponse<Void>> deleteComment(
       @PathVariable Long commentId,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    commentService.deleteComment(commentId, userDetails.getUsername());
+    commentService.deleteComment(commentId, userDetails.getUser().getId());
     return CommonResponse.ok(null);
   }
 }

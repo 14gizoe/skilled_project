@@ -42,24 +42,26 @@ public class JwtUtil {
   }
 
   // 토큰 생성
-  public String createAccessToken(String username) {
+  public String createAccessToken(Long userId, String username) {
     Date date = new Date();
 
     return BEARER_PREFIX +
         Jwts.builder()
             .setSubject(username)
+            .claim("userId", userId)
             .setExpiration(new Date(date.getTime() + ACCESS_TOKEN_TIME))
             .setIssuedAt(date)
             .signWith(key, signatureAlgorithm)
             .compact();
   }
 
-  public String createRefreshToken(String username) {
+  public String createRefreshToken(Long userId, String username) {
     Date date = new Date();
 
     return BEARER_PREFIX +
         Jwts.builder()
             .setSubject(username)
+            .claim("userId", userId)
             .setExpiration(new Date(date.getTime() + REFRESH_TOKEN_TIME))
             .setIssuedAt(date)
             .signWith(key, signatureAlgorithm)
@@ -105,13 +107,5 @@ public class JwtUtil {
   // 토큰에서 사용자 정보 가져오기
   public Claims getUserInfoFromToken(String token) {
     return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-  }
-
-  public Claims getUserInfoFromExpriedToken(String token) {
-    try {
-      return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
-    } catch (ExpiredJwtException e) {
-      return e.getClaims();
-    }
   }
 }
