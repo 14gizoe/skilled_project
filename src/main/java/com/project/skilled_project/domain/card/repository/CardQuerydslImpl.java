@@ -34,6 +34,7 @@ public class CardQuerydslImpl implements CardQuerydsl {
         .on(QCard.card.id.eq(QWorker.worker.cardId))
         .join(QUser.user)
         .on(QUser.user.id.eq(QWorker.worker.userId))
+        .where(QWorker.worker.cardId.eq(cardId))
         .fetch();
 
     List<ChecklistResponseDto> checklists = jpaQueryFactory
