@@ -6,7 +6,9 @@ import com.project.skilled_project.domain.board.dto.response.BoardDto;
 import com.project.skilled_project.domain.board.dto.response.BoardsResponseDto;
 import com.project.skilled_project.domain.board.service.BoardService;
 import com.project.skilled_project.global.response.CommonResponse;
+import com.project.skilled_project.global.util.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -31,18 +33,18 @@ public class BoardController {
   @PostMapping
   public void createBoard(
       @RequestBody BoardRequestDto req,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    boardService.createBoard(req, userDetails.getUsername());
+    boardService.createBoard(req, userDetails.getUser());
   }
 
   @GetMapping
   public ResponseEntity<CommonResponse<BoardsResponseDto>> getBoards(
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
     return ResponseEntity.ok().body(
         CommonResponse.<BoardsResponseDto>builder()
-            .data(boardService.getBoards(userDetails.getUsername()))
+            .data(boardService.getBoards(userDetails.getUser()))
             .build()
     );
   }
@@ -50,11 +52,11 @@ public class BoardController {
   @GetMapping("/{boardId}")
   public ResponseEntity<CommonResponse<BoardDto>> getBoard(
       @PathVariable Long boardId,
-      @AuthenticationPrincipal UserDetails userDetails
-  ) {
+      @AuthenticationPrincipal UserDetailsImpl userDetails
+  ) throws NotFoundException {
     return ResponseEntity.ok().body(
         CommonResponse.<BoardDto>builder()
-            .data(boardService.getBoard(boardId, userDetails.getUsername()))
+            .data(boardService.getBoard(boardId, userDetails.getUser()))
             .build()
     );
   }
@@ -63,34 +65,34 @@ public class BoardController {
   public void updateBoard(
       @PathVariable Long boardId,
       @RequestBody BoardRequestDto req,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    boardService.updateBoard(boardId, req, userDetails.getUsername());
+    boardService.updateBoard(boardId, req, userDetails.getUser());
   }
 
   @PutMapping("/{boardId}/invite")
   public void inviteUser(
       @PathVariable Long boardId,
       @RequestBody UserInviteRequestDto req,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    boardService.inviteUser(boardId, req, userDetails.getUsername());
+    boardService.inviteUser(boardId, req, userDetails.getUser());
   }
 
   @DeleteMapping("/{boardId}/invite")
   public void deleteUser(
       @PathVariable Long boardId,
       @RequestBody UserInviteRequestDto req,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    boardService.deleteUser(boardId, req, userDetails.getUsername());
+    boardService.deleteUser(boardId, req, userDetails.getUser());
   }
 
   @DeleteMapping("/{boardId}")
   public void deleteBoard(
       @PathVariable Long boardId,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) {
-    boardService.deleteBoard(boardId, userDetails.getUsername());
+    boardService.deleteBoard(boardId, userDetails.getUser());
   }
 }

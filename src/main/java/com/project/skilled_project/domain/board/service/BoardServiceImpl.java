@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,12 +34,10 @@ public class BoardServiceImpl implements BoardService {
 
   private final BoardRepository boardRepository;
   private final ParticipantRepository participantRepository;
-  private final UserService userService;
 
   @Override
   @Transactional
-  public void createBoard(BoardRequestDto req, String username) {
-    User user = userService.findUser(username);
+  public void createBoard(BoardRequestDto req, User user) {
     Board board = new Board(req, user);
     Board savedBoard = boardRepository.save(board);
     Participant participant = new Participant(savedBoard.getId(), user.getId());
@@ -46,8 +45,7 @@ public class BoardServiceImpl implements BoardService {
   }
 
   @Override
-  public BoardsResponseDto getBoards(String username) {
-    User user = userService.findUser(username);
+  public BoardsResponseDto getBoards(User user) {
     validateUserByUser(user);
     List<BoardsDto> boardsList = boardRepository.getBoards();
     BoardsResponseDto boardsResponseDto = new BoardsResponseDto();
@@ -65,17 +63,22 @@ public class BoardServiceImpl implements BoardService {
   }
 
   @Override
-  public BoardDto getBoard(Long boardId, String username) {
-    User user = userService.findUser(username);
+  public BoardDto getBoard(Long boardId, User user) throws NotFoundException {
     validateUser(user, boardId);
     List<BoardResponseDto> boardList = boardRepository.getBoard(boardId);
 
-    String title = boardList.get(0).getBoardTitle();
-    String color = boardList.get(0).getBoardColor();
-
-    List<ColumnDto> columnDtoList = mapppingBoard(
-        boardList);
+    BoardResponseDto firstBoard = boardList.stream()
+        .findFirst()
+        .orElseThrow(NotFoundException::new);
+    String title = firstBoard.getBoardTitle();
+    String color = firstBoard.getBoardColor();
+    List<ColumnDto> columnDtoList = mapppingBoard(boardList);
     return new BoardDto(title, color, columnDtoList);
+  }
+
+  @Override
+  public Board findBoard(Long boardId) {
+    return boardRepository.findById(boardId).orElseThrow(() -> new NullPointerException("보드가 존재하지 않음"));
   }
 
   private List<ColumnDto> mapppingBoard(List<BoardResponseDto> boardList) {
@@ -109,17 +112,15 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   @Transactional
-  public void updateBoard(Long boardId, BoardRequestDto req, String username) {
+  public void updateBoard(Long boardId, BoardRequestDto req, User user) {
     Board board = validateBoard(boardId);
-    User user = userService.findUser(username);
     validateUser(user, boardId);
     board.update(req);
   }
 
   @Override
   @Transactional
-  public void inviteUser(Long boardId, UserInviteRequestDto req, String username) {
-    User user = userService.findUser(username);
+  public void inviteUser(Long boardId, UserInviteRequestDto req, User user) {
     validateUser(user, boardId);
     List<Long> invitedUser = participantRepository.findAllByBoardId(boardId);
     Set<Long> mergedSet = new HashSet<>(req.getInvitingList());
@@ -135,8 +136,7 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   @Transactional
-  public void deleteUser(Long boardId, UserInviteRequestDto req, String username) {
-    User user = userService.findUser(username);
+  public void deleteUser(Long boardId, UserInviteRequestDto req, User user) {
     validateUser(user, boardId);
 
     List<Long> deletingUserIds = req.getInvitingList();
@@ -147,9 +147,8 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   @Transactional
-  public void deleteBoard(Long boardId, String username) {
+  public void deleteBoard(Long boardId, User user) {
     Board board = validateBoard(boardId);
-    User user = userService.findUser(username);
     validateUser(user, boardId);
     board.softDelete();
   }
