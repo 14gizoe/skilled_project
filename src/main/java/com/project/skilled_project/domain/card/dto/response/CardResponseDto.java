@@ -12,6 +12,7 @@ public class CardResponseDto {
   private Long userCount;
   private Long fileCount;
   private Long commentCount;
+  private LocalDateTime startDate;
   private LocalDateTime endDate;
 
   public CardResponseDto(
@@ -22,6 +23,7 @@ public class CardResponseDto {
       Long userCount,
       Long fileCount,
       Long commentCount,
+      LocalDateTime startDate,
       LocalDateTime endDate
   ) {
     this.cardId = cardId;
@@ -31,6 +33,7 @@ public class CardResponseDto {
     this.userCount = userCount;
     this.fileCount = fileCount;
     this.commentCount = commentCount;
+    this.startDate = startDate;
     this.endDate = endDate;
   }
 }
