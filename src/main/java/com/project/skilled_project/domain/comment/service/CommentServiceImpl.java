@@ -1,5 +1,7 @@
 package com.project.skilled_project.domain.comment.service;
 
+import com.project.skilled_project.domain.card.entity.Card;
+import com.project.skilled_project.domain.card.service.CardService;
 import com.project.skilled_project.domain.comment.entity.Comment;
 import com.project.skilled_project.domain.comment.repository.CommentRepository;
 import com.project.skilled_project.domain.comment.repository.CommentRepositoryQuery;
@@ -15,12 +17,13 @@ public class CommentServiceImpl implements CommentService {
 
   private final CommentRepository commentRepository;
   private final CommentRepositoryQuery commentRepositoryQuery;
+  private final CardService cardService;
 
   @Override
   @Transactional
   public void createComment(String content, Long cardId, Long userId) {
-    // cardId 검증
-    Comment comment = new Comment(content, cardId, userId);
+    Card card = cardService.findCardById(cardId);
+    Comment comment = new Comment(content, card.getId(), userId);
     commentRepository.save(comment);
   }
 
