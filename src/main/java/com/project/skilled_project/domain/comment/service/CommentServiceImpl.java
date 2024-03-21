@@ -15,31 +15,27 @@ public class CommentServiceImpl implements CommentService {
 
   private final CommentRepository commentRepository;
   private final CommentRepositoryQuery commentRepositoryQuery;
-  private final UserService userService;
 
   @Override
   @Transactional
-  public void createComment(String content, Long cardId, String verifiedUser) {
+  public void createComment(String content, Long cardId, Long userId) {
     // cardId 검증
-    User user = userService.findUser(verifiedUser);
-    Comment comment = new Comment(content, cardId, user.getId());
+    Comment comment = new Comment(content, cardId, userId);
     commentRepository.save(comment);
   }
 
   @Override
   @Transactional
-  public void updateComment(Long commentId, String content, String username) {
-    User user = userService.findUser(username);
-    Comment comment = commentRepositoryQuery.getComment(commentId, user.getId());
+  public void updateComment(Long commentId, String content, Long userId) {
+    Comment comment = commentRepositoryQuery.getComment(commentId, userId);
 
     comment.update(content);
   }
 
   @Override
   @Transactional
-  public void deleteComment(Long commentId, String username) {
-    User user = userService.findUser(username);
-    Comment comment = commentRepositoryQuery.getComment(commentId, user.getId());
+  public void deleteComment(Long commentId, Long userId) {
+    Comment comment = commentRepositoryQuery.getComment(commentId, userId);
 
     comment.delete();
   }

@@ -22,7 +22,6 @@ public class FileServiceImpl implements FileService {
   @Transactional
   public List<FileResponseDto> upload(Long sourceId, String category, MultipartFile[] files) {
     List<FileResponseDto> fileResponseList = new ArrayList<>();
-    // sourceId를 나중에 userId로 변경
     for (MultipartFile file : files) {
       String filePath = s3Service.uploadFile(file, category);
       String orifinalFileName = file.getOriginalFilename();

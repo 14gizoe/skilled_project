@@ -42,7 +42,8 @@ public class User extends Timestamp {
     this.profileImage = profileImage;
   }
 
-  public User(String username) {
+  public User(Long userId, String username) {
+    this.id = userId;
     this.username = username;
   }
 

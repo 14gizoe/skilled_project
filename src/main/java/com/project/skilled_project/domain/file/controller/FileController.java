@@ -4,6 +4,7 @@ import com.project.skilled_project.domain.file.dto.FileRequestDto;
 import com.project.skilled_project.domain.file.dto.FileResponseDto;
 import com.project.skilled_project.domain.file.service.FileService;
 import com.project.skilled_project.global.response.CommonResponse;
+import com.project.skilled_project.global.util.UserDetailsImpl;
 import java.io.IOException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class FileController {
   public ResponseEntity<CommonResponse<List<FileResponseDto>>> uploadFile(
       @RequestPart(value = "category") FileRequestDto fileRequest,
       @RequestPart(value = "files") MultipartFile[] files,
-      @AuthenticationPrincipal UserDetails userDetails
+      @AuthenticationPrincipal UserDetailsImpl userDetails
   ) throws IOException {
     List<FileResponseDto> fileResponseList = fileService.upload(fileRequest.getSourceId(),
         fileRequest.getCategory(), files);

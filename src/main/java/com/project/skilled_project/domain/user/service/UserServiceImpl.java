@@ -39,23 +39,23 @@ public class UserServiceImpl implements UserService {
 
   @Override
   @Transactional
-  public void updateUser(String email, String username, String password, String verifiedUser) {
-    User user = findUser(verifiedUser);
+  public void updateUser(String email, String username, String password, Long userId) {
+    User user = findUser(userId);
 
     if (userRepository.existsByEmailOrUsername(email, username)) {
       throw new IllegalArgumentException("존재하는 계정입니다.");
     }
 
     String encodedPassword = passwordEncoder.encode(password);
-    String filePath = fileService.getFilePath(user.getId(), "profile");
+    String filePath = fileService.getFilePath(userId, "profile");
     user.update(email, username, encodedPassword, filePath);
     refreshTokenRepository.delete(username);
   }
 
   @Override
   @Transactional
-  public void deleteUser(String username) {
-    User user = userRepository.findByUsername(username).orElseThrow(() ->
+  public void deleteUser(Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(() ->
         new UsernameNotFoundException("존재하지 않는 유저입니다.")
     );
 
@@ -63,8 +63,8 @@ public class UserServiceImpl implements UserService {
   }
 
   @Override
-  public User findUser(String username) {
-    User user = userRepository.findByUsername(username).orElseThrow(() ->
+  public User findUser(Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(() ->
         new UsernameNotFoundException("존재하지 않는 유저입니다.")
     );
     return user;

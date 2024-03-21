@@ -52,8 +52,10 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
       } else if (tokenStatus == 2) {
         try {
           Claims info = jwtUtil.getExpiredTokenClaims(tokenValue);
+          Long userId = info.get("userId", Long.class);
+
           if (refreshTokenRepository.existsByKey(info.getSubject())) {
-            String newToken = jwtUtil.createAccessToken(info.getSubject());
+            String newToken = jwtUtil.createAccessToken(userId, info.getSubject());
             res.addHeader(JwtUtil.AUTHORIZATION_HEADER, newToken);
             res.setStatus(HttpServletResponse.SC_OK);
 
@@ -81,24 +83,24 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         }
       } else { // 유효한 토큰
         Claims info = jwtUtil.getUserInfoFromToken(tokenValue);
-        setAuthentication(info.getSubject());
+        setAuthentication(info.get("userId", Long.class), info.getSubject());
       }
     }
       filterChain.doFilter(req, res);
   }
 
   // 인증 처리
-  public void setAuthentication(String username) {
+  public void setAuthentication(Long userId, String username) {
     SecurityContext context = SecurityContextHolder.createEmptyContext();
-    Authentication authentication = createAuthentication(username);
+    Authentication authentication = createAuthentication(userId, username);
     context.setAuthentication(authentication);
 
     SecurityContextHolder.setContext(context);
   }
 
   // 인증 객체 생성
-  private Authentication createAuthentication(String username) {
-    UserDetails userDetails = new UserDetailsImpl(username);
+  private Authentication createAuthentication(Long userId, String username) {
+    UserDetails userDetails = new UserDetailsImpl(userId, username);
     return new UsernamePasswordAuthenticationToken(userDetails, null, null);
   }
 }
