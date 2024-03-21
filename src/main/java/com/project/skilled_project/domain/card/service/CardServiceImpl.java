@@ -6,6 +6,7 @@ import com.project.skilled_project.domain.card.dto.request.CardCreateRequestDto;
 import com.project.skilled_project.domain.card.dto.request.CardUpdateDateRequestDto;
 import com.project.skilled_project.domain.card.dto.request.CardUpdateRequestDto;
 import com.project.skilled_project.domain.card.dto.response.CardDetailsResponseDto;
+import com.project.skilled_project.domain.card.dto.response.CardResponseDto;
 import com.project.skilled_project.domain.card.entity.Card;
 import com.project.skilled_project.domain.card.repository.CardRepository;
 import com.project.skilled_project.domain.columns.entity.Columns;
@@ -44,6 +45,11 @@ public class CardServiceImpl implements CardService{
         () -> new EntityNotFoundException("카드 없음")
     );
     return cardRepository.getQueryCard(cardId);
+  }
+
+  @Override
+  public List<CardResponseDto> getCards() {
+    return cardRepository.getQueryCards();
   }
 
   @Override

@@ -1,6 +1,9 @@
 package com.project.skilled_project.domain.card.repository;
 
+import static com.project.skilled_project.domain.card.entity.QCard.card;
+
 import com.project.skilled_project.domain.card.dto.response.CardDetailsResponseDto;
+import com.project.skilled_project.domain.card.dto.response.CardResponseDto;
 import com.project.skilled_project.domain.card.entity.Card;
 import com.project.skilled_project.domain.card.entity.QCard;
 import com.project.skilled_project.domain.checklist.dto.response.ChecklistResponseDto;
@@ -50,5 +53,16 @@ public class CardQuerydslImpl implements CardQuerydsl {
         .fetch();
 
     return new CardDetailsResponseDto(card, workers, checklists, comments);
+  }
+
+  @Override
+  public List<CardResponseDto> getQueryCards() {
+    return jpaQueryFactory
+        .select(Projections.constructor(CardResponseDto.class,
+            card.id, card.title, card.description, card.color,
+            card.userCount, card.fileCount, card.commentCount, card.endDate)
+        )
+        .from(card)
+        .fetch();
   }
 }
