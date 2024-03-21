@@ -11,7 +11,7 @@ import com.project.skilled_project.domain.columns.entity.Columns;
 import com.project.skilled_project.domain.columns.repository.ColumnsRepository;
 import com.project.skilled_project.domain.user.entity.User;
 import com.project.skilled_project.domain.user.service.UserService;
-import com.project.skilled_project.domain.worker.repository.WorkerRepository;
+import com.project.skilled_project.domain.worker.service.WorkerService;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -23,10 +23,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class CardServiceImpl implements CardService{
   private final CardRepository cardRepository;
+
+  private final UserService userService;
+  private final WorkerService workerService;
   private final ColumnsRepository columnsRepository;
   private final BoardRepository boardRepository;
-  private final UserService userService;
-  private final WorkerRepository workerRepository;
 
   @Override
   public void createCard(CardCreateRequestDto cardCreateRequestDto) {
@@ -41,8 +42,8 @@ public class CardServiceImpl implements CardService{
   }
 
   @Override
-  public void updateCard(Long cardId, CardUpdateRequestDto cardUpdateRequestDto, String username) {
-    User user = userService.findUser(username);
+  public void updateCard(Long cardId, CardUpdateRequestDto cardUpdateRequestDto, Long userId) {
+    User user = userService.findUser(userId);
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
@@ -56,9 +57,9 @@ public class CardServiceImpl implements CardService{
   public void updateCardDate(
       Long cardId,
       CardUpdateDateRequestDto cardUpdateDateRequestDto,
-      String username
+      Long userId
   ) {
-    User user = userService.findUser(username);
+    User user = userService.findUser(userId);
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
@@ -69,8 +70,8 @@ public class CardServiceImpl implements CardService{
   }
 
   @Override
-  public void deleteCard(Long cardId, String username) {
-    User user = userService.findUser(username);
+  public void deleteCard(Long cardId, Long userId) {
+    User user = userService.findUser(userId);
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
@@ -81,8 +82,15 @@ public class CardServiceImpl implements CardService{
     cardRepository.delete(card);
   }
 
+  @Override
+  public Card findCardById(Long cardId) {
+    return  cardRepository.findById(cardId).orElseThrow(
+        () -> new EntityNotFoundException("카드 없음")
+    );
+  }
+
   private boolean isWorkernotInCard(Long userId, Long cardId) {
-    List<Long> workerIds = workerRepository.findAllUserIdByCardId(cardId);
+    List<Long> workerIds = workerService.findAllUserIdByCardId(cardId);
     for (Long workerId : workerIds) {
       if (userId.equals(workerId)) {
         return false;
