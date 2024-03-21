@@ -101,7 +101,7 @@ public class CardServiceImpl implements CardService{
   }
 
   @Override
-  public void CommentCountUp(Long cardId) {
+  public void commentCountUp(Long cardId) {
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
@@ -109,7 +109,7 @@ public class CardServiceImpl implements CardService{
   }
 
   @Override
-  public void CommentCountDown(Long cardId) {
+  public void commentCountDown(Long cardId) {
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
