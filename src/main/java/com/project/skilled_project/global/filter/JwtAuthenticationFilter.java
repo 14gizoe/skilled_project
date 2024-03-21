@@ -57,8 +57,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
       throws IOException {
     User user = ((UserDetailsImpl) authResult.getPrincipal()).getUser();
 
-    String accessToken = jwtUtil.createAccessToken(user.getUsername());
-    String refreshToken = jwtUtil.createRefreshToken(user.getUsername()).substring(7);
+    String accessToken = jwtUtil.createAccessToken(user.getId(), user.getUsername());
+    String refreshToken = jwtUtil.createRefreshToken(user.getId(), user.getUsername()).substring(7);
     response.addHeader(JwtUtil.AUTHORIZATION_HEADER, accessToken);
     refreshTokenRepository.save(user.getUsername(), refreshToken);
 
