@@ -13,11 +13,13 @@ public class BoardDto {
 
   private String title;
   private String color;
+  private List<String> invitedUsers;
   private List<ColumnDto> columns;
 
-  public BoardDto(String title, String color, List<ColumnDto> columnDtoList) {
+  public BoardDto(String title, String color,List<String> usernames, List<ColumnDto> columnDtoList) {
     this.title = title;
     this.color = color;
+    invitedUsers = usernames;
     this.columns = columnDtoList;
   }
 }
