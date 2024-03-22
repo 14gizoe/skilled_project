@@ -4,10 +4,7 @@ import com.project.skilled_project.domain.columns.dto.request.ColumnsChangeNumbe
 import com.project.skilled_project.domain.columns.dto.request.ColumnsCreateRequestDto;
 import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameRequestDto;
 import com.project.skilled_project.domain.columns.service.ColumnsService;
-import com.project.skilled_project.global.response.CommonResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
