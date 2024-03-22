@@ -6,6 +6,7 @@ import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameR
 import com.project.skilled_project.domain.columns.entity.Columns;
 import com.project.skilled_project.domain.columns.repository.ColumnsRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -31,15 +32,14 @@ public class ColumnsServiceImpl implements ColumnsService {
   @Override
   public void updateNameColumns(Long columnsId,
       ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto) {
-    Columns columns = columnsRepository.findById(columnsId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컬럼입니다."));
+    Columns columns = findColumns(columnsId);
     columns.updateNameColumns(columnsUpdateNameRequestDto);
   }
 
+
   @Override
   public void deleteColumns(Long columnsId) {
-    Columns columns = columnsRepository.findById(columnsId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컬럼입니다."));
+    Columns columns = findColumns(columnsId);
     columnsRepository.delete(columns);
   }
 
@@ -47,26 +47,23 @@ public class ColumnsServiceImpl implements ColumnsService {
   public void changeNumberColumns(Long columnsId,
       ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto) {
     // 현재 컬럼의 데이터
-    Columns columns = columnsRepository.findById(columnsId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 컬럼입니다.1"));
-    Columns columns1 = columnsRepository.findById(columnsChangeNumberRequestDto.getColumnsId())
-        .orElseThrow(() -> new IllegalArgumentException("목표 컬럼이 존재하지 않는 컬럼입니다."));
-    if (!Objects.equals(columns.getBoardId(), columns1.getBoardId())) {
+    Columns nowColumns = findColumns(columnsId);
+    Columns targetColumns = findColumns(columnsChangeNumberRequestDto.getColumnsId());
+    if (!Objects.equals(nowColumns.getBoardId(), targetColumns.getBoardId())) {
       throw new IllegalArgumentException("두 컬럼의 보드가 다릅니다.");
     }
     // 어느 보드에 있는지 알아야함.
     // 수정하려는 컬럼과 같은 보드의 컬럼들을 불러와서 리스트로 만듬
-    Long who = columns.getPosition();
-    Long where = columns1.getPosition();
-    Long gab = 0L;
-    List<Columns> columnsList = null;
+    Long who = nowColumns.getPosition();
+    Long where = targetColumns.getPosition();
+    List<Columns> columnsList = new ArrayList<>();
 
     if (who < where) {
       columnsList = columnsRepository.findAllByBoardIdOrderByPositionAsc(
-          columns.getBoardId());
+          nowColumns.getBoardId());
     } else if (where < who) {
       columnsList = columnsRepository.findAllByBoardIdOrderByPositionDesc(
-          columns.getBoardId());
+          nowColumns.getBoardId());
     }
 
     Queue<Long> positionStack = new LinkedList<>();
@@ -87,10 +84,9 @@ public class ColumnsServiceImpl implements ColumnsService {
         columnsList.get(i).getPosition());
     positionStack.add(columnsList.get(i).getPosition());
     columnsChange.changePositionColumns(positionStack.poll());
-    columns.changePositionColumns(positionStack.poll());
+    nowColumns.changePositionColumns(positionStack.poll());
 
   }
-
   @Override
   public Columns findColumns(Long columnsId){
     return columnsRepository.findById(columnsId).orElseThrow(
