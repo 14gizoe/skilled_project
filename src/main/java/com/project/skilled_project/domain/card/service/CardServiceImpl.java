@@ -20,6 +20,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -64,6 +67,7 @@ public class CardServiceImpl implements CardService{
   }
 
   @Override
+  @Cacheable(value = "Card", key = "#cardId", cacheManager = "cacheManager", unless = "#result == null")
   public CardDetailsResponseDto getCard(Long cardId) {
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
@@ -79,11 +83,13 @@ public class CardServiceImpl implements CardService{
   }
 
   @Override
+  @Cacheable(value = "CardList", key = "'all'", cacheManager = "cacheManager", unless = "#result == null")
   public List<CardResponseDto> getCards() {
     return cardRepository.getQueryCards();
   }
 
   @Override
+  @CachePut(value = "Card", key = "#cardId", cacheManager = "cacheManager")
   public void updateCard(Long cardId, CardUpdateRequestDto cardUpdateRequestDto, Long userId) {
     User user = userService.findUser(userId);
     Card card = cardRepository.findById(cardId).orElseThrow(
@@ -112,6 +118,7 @@ public class CardServiceImpl implements CardService{
   }
 
   @Override
+  @CacheEvict(value = "Card", key = "#cardId", cacheManager = "cacheManager")
   public void deleteCard(Long cardId, Long userId) {
     User user = userService.findUser(userId);
     Card card = cardRepository.findById(cardId).orElseThrow(
