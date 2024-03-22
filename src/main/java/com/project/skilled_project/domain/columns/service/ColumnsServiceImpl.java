@@ -88,7 +88,6 @@ public class ColumnsServiceImpl implements ColumnsService {
     positionStack.add(columnsList.get(i).getPosition());
     columnsChange.changePositionColumns(positionStack.poll());
     columns.changePositionColumns(positionStack.poll());
-
   }
 
   @Override

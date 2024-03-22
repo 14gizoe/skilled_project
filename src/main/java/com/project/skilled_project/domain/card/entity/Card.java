@@ -67,4 +67,8 @@ public class Card extends Timestamp {
   public void commentCountDown() {
     --commentCount;
   }
+
+  public void updateCommentCount(Long commentCount){
+    this.commentCount = commentCount;
+  }
 }
