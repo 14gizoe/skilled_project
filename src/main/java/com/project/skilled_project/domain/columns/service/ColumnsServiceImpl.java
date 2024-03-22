@@ -6,12 +6,11 @@ import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameR
 import com.project.skilled_project.domain.columns.entity.Columns;
 import com.project.skilled_project.domain.columns.repository.ColumnsRepository;
 import jakarta.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ColumnsServiceImpl implements ColumnsService {
 
   private final ColumnsRepository columnsRepository;
+  private final RedissonClient redissonClient;
 
   // 컬럼 생성
   @Override
@@ -46,52 +46,53 @@ public class ColumnsServiceImpl implements ColumnsService {
   @Override
   public void changeNumberColumns(Long columnsId,
       ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto) {
-    // 현재 컬럼의 데이터
-    Columns nowColumns = findColumns(columnsId);
-    Columns targetColumns = findColumns(columnsChangeNumberRequestDto.getColumnsId());
-    if (!Objects.equals(nowColumns.getBoardId(), targetColumns.getBoardId())) {
-      throw new IllegalArgumentException("두 컬럼의 보드가 다릅니다.");
-    }
-    // 어느 보드에 있는지 알아야함.
-    // 수정하려는 컬럼과 같은 보드의 컬럼들을 불러와서 리스트로 만듬
-    Long who = nowColumns.getPosition();
-    Long where = targetColumns.getPosition();
-    List<Columns> columnsList = new ArrayList<>();
+    String lockName = "COLUMNS" + columnsId;
+    RLock rLock = redissonClient.getLock(lockName);
+    try {
+      boolean available = rLock.tryLock(15L, 3L, TimeUnit.SECONDS);
+      if (!available) {
+        throw new RuntimeException();
+      }
+      Columns nowColumns = findColumns(columnsId);
+      Columns targetColumns = findColumns(columnsChangeNumberRequestDto.getColumnsId());
+      if (!Objects.equals(nowColumns.getBoardId(), targetColumns.getBoardId())) {
+        throw new RuntimeException();
+      }
+      System.out.println(nowColumns.getPosition());
+      System.out.println(targetColumns.getPosition());
+      double centerPosition = 0L;
+      if (nowColumns.getPosition() > targetColumns.getPosition()) {
+        centerPosition = columnsRepository.getCenterColumnsPositionNowBig(nowColumns.getBoardId(),
+            nowColumns.getPosition(), targetColumns.getPosition());
+      } else {
+        centerPosition = columnsRepository.getCenterColumnsPositionTargetBig(
+            nowColumns.getBoardId(),
+            nowColumns.getPosition(), targetColumns.getPosition());
+      }
+      System.out.println(nowColumns.getPosition());
+      System.out.println(centerPosition);
+      System.out.println(targetColumns.getPosition());
+      if (nowColumns.getPosition() != centerPosition) {
+        double newPosition = (targetColumns.getPosition() + centerPosition) / 2;
+        nowColumns.changePositionColumns(newPosition);
+      }
 
-    if (who < where) {
-      columnsList = columnsRepository.findAllByBoardIdOrderByPositionAsc(
-          nowColumns.getBoardId());
-    } else if (where < who) {
-      columnsList = columnsRepository.findAllByBoardIdOrderByPositionDesc(
-          nowColumns.getBoardId());
+    } catch (InterruptedException e) {
+      //락을 얻으려고 시도하다가 인터럽트를 받았을 때 발생하는 예외
+      throw new RuntimeException();
+    } finally {
+      rLock.unlock();
     }
-
-    Queue<Long> positionStack = new LinkedList<>();
-    int i = 0;
-    while (!Objects.equals(columnsList.get(i).getPosition(), who)) {
-      i++;
-    }
-    positionStack.add(columnsList.get(i).getPosition());
-    i++;
-    while (!Objects.equals(columnsList.get(i).getPosition(), where)) {
-      Columns columnsChange = columnsRepository.findByPosition(
-          columnsList.get(i).getPosition());
-      positionStack.add(columnsList.get(i).getPosition());
-      columnsChange.changePositionColumns(positionStack.poll());
-      i++;
-    }
-    Columns columnsChange = columnsRepository.findByPosition(
-        columnsList.get(i).getPosition());
-    positionStack.add(columnsList.get(i).getPosition());
-    columnsChange.changePositionColumns(positionStack.poll());
-    nowColumns.changePositionColumns(positionStack.poll());
-
   }
+
+
   @Override
-  public Columns findColumns(Long columnsId){
+  public Columns findColumns(Long columnsId) {
+
     return columnsRepository.findById(columnsId).orElseThrow(
-        ()-> new EntityNotFoundException("컬럼 없음")
+        () -> new EntityNotFoundException("컬럼 없음")
     );
   }
-
 }
+
+
