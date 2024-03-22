@@ -24,6 +24,7 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = new Comment(content, card.getId(), userId);
     commentRepository.save(comment);
     cardService.commentCountUp(cardId);
+
   }
 
   @Override
@@ -38,7 +39,6 @@ public class CommentServiceImpl implements CommentService {
   @Transactional
   public void deleteComment(Long commentId, Long userId) {
     Comment comment = commentRepositoryQuery.getComment(commentId, userId);
-
     comment.delete();
     cardService.commentCountDown(comment.getCardId());
   }

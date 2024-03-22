@@ -15,8 +15,15 @@ import com.project.skilled_project.domain.user.entity.User;
 import com.project.skilled_project.domain.user.service.UserService;
 import com.project.skilled_project.domain.worker.service.WorkerService;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,13 +37,30 @@ public class CardServiceImpl implements CardService{
   private final WorkerService workerService;
   private final ColumnsService columnsService;
   private final BoardService boardService;
+  private final StringRedisTemplate stringRedisTemplate;
 
   @Override
   public void createCard(CardCreateRequestDto cardCreateRequestDto) {
     Columns columns = columnsService.findColumns(cardCreateRequestDto.getColumnId());
     Board board = boardService.findBoard(cardCreateRequestDto.getBoardId());
     Card card = new Card(cardCreateRequestDto);
-    cardRepository.save(card);
+    Card savedCard = cardRepository.save(card);
+    initializeCounter(savedCard.getId());
+  }
+
+  public void initializeCounter(Long cardId) {
+    ValueOperations<String, String> ops = this.stringRedisTemplate.opsForValue();
+    ops.set(cardId + "", "0");
+  }
+
+  @Scheduled(fixedDelay = 1000 * 60 * 60)
+  @Transactional
+  public void processTasks() {
+    List<Card> cardList = cardRepository.findAll();
+
+    for (Card card : cardList) {
+      card.updateCommentCount(Long.parseLong(getCounter(card.getId())));
+    }
   }
 
   @Override
@@ -44,7 +68,14 @@ public class CardServiceImpl implements CardService{
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
-    return cardRepository.getQueryCard(cardId);
+    CardDetailsResponseDto cardDetailsResponseDto = cardRepository.getQueryCard(card.getId());
+    cardDetailsResponseDto.updateCommentCount(Long.parseLong(getCounter(cardId)));
+    return cardDetailsResponseDto;
+  }
+
+  public String getCounter(Long cardId) {
+    ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+    return ops.get(cardId+"");
   }
 
   @Override
@@ -105,7 +136,13 @@ public class CardServiceImpl implements CardService{
     Card card = cardRepository.findById(cardId).orElseThrow(
         () -> new EntityNotFoundException("카드 없음")
     );
-    card.commentCountUp();
+    increaseCount(cardId);
+//    card.commentCountUp();
+  }
+
+  public void increaseCount(Long cardId) {
+    ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+    ops.increment(cardId + "");
   }
 
   @Override

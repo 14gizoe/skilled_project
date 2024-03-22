@@ -30,44 +30,36 @@ public class ColumnsController {
 
   // 컬럼 생성 /api/columns
   @PostMapping
-  public ResponseEntity<CommonResponse<Void>> createColumns(
+  public void createColumns(
       @RequestBody ColumnsCreateRequestDto columnsCreateRequestDto
   ) {
     columnsService.createColumns(columnsCreateRequestDto);
-    return ResponseEntity.status(HttpStatus.OK.value()).body(
-        CommonResponse.<Void>builder().build());
   }
 
   // 컬럼 이름 수정 /api/columns/{columnId}
   @PutMapping("/{columnsId}")
-  public ResponseEntity<CommonResponse<Void>> updateNameColumns(
+  public void updateNameColumns(
       @PathVariable Long columnsId,
       @RequestBody ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto
   ) {
     columnsService.updateNameColumns(columnsId, columnsUpdateNameRequestDto);
-    return ResponseEntity.status(HttpStatus.OK.value()).body(
-        CommonResponse.<Void>builder().build());
   }
 
   // 컬럼 삭제 /api/columns/{columnId}
   @DeleteMapping("/{columnsId}")
-  public ResponseEntity<CommonResponse<Void>> deleteColumns(
+  public void deleteColumns(
       @PathVariable Long columnsId) {
 
     columnsService.deleteColumns(columnsId);
-    return ResponseEntity.status(HttpStatus.OK.value()).body(
-        CommonResponse.<Void>builder().build());
   }
 
   //컬럼 순서 이동 /api/columns/{columnId}
   @PutMapping("/{columnsId}/shifting")
-  public ResponseEntity<CommonResponse<Void>> changeNumberColumns(
+  public void changeNumberColumns(
       @PathVariable Long columnsId,
       @RequestBody ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto
   ) {
     columnsService.changeNumberColumns(columnsId, columnsChangeNumberRequestDto);
-    return ResponseEntity.status(HttpStatus.OK.value()).body(
-        CommonResponse.<Void>builder().build());
   }
 
   @GetMapping
