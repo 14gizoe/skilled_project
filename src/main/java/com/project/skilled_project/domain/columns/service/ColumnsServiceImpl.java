@@ -1,8 +1,6 @@
 package com.project.skilled_project.domain.columns.service;
 
-import com.project.skilled_project.domain.card.dto.response.CardDetailsResponseDto;
 import com.project.skilled_project.domain.card.dto.response.CardResponseDto;
-import com.project.skilled_project.domain.card.entity.Card;
 import com.project.skilled_project.domain.columns.dto.ColumnDto;
 import com.project.skilled_project.domain.columns.dto.request.ColumnsChangeNumberRequestDto;
 import com.project.skilled_project.domain.columns.dto.request.ColumnsCreateRequestDto;
@@ -20,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -109,12 +108,14 @@ public class ColumnsServiceImpl implements ColumnsService {
   }
 
   @Override
+  @Cacheable(value = "List<ColumnReponseDto>", key = "'all'", cacheManager = "cacheManager", unless = "#result == null")
   public List<ColumnResponseDto> getColumns() {
     List<ColumnDto> columnList = columnQueryRepository.getColumns();
     Map<Long, List<CardResponseDto>> groupedDataMap = new HashMap<>();
     for (ColumnDto columnDto : columnList) {
       Long columnId = columnDto.getCards().getColumnId();
-      List<CardResponseDto> groupedDataList = groupedDataMap.getOrDefault(columnId, new ArrayList<>());
+      List<CardResponseDto> groupedDataList = groupedDataMap.getOrDefault(columnId,
+          new ArrayList<>());
       groupedDataList.add(
           new CardResponseDto(columnDto.getCards())
       );
