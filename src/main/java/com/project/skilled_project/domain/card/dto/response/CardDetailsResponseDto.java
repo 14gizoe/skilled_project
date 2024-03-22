@@ -35,11 +35,14 @@ public class CardDetailsResponseDto {
     this.color = card.getColor();
     this.workerCount = card.getWorkerCount();
     this.fileCount = card.getFileCount();
-    this.commentCount = card.getCommentCount();
     this.startDate = card.getStartDate();
     this.endDate = card.getEndDate();
     this.workers = workers;
     this.checklists = checklists;
     this.comments = comments;
+  }
+
+  public void updateCommentCount(Long commentCount){
+    this.commentCount = commentCount;
   }
 }
