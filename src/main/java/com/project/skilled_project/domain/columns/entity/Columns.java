@@ -27,7 +27,7 @@ public class Columns {
   @Column(name = "board_id", nullable = false)
   private Long boardId;
   @Column(name = "position", nullable = false)
-  private double position;
+  private Long position;
 
 
   public Columns(ColumnsCreateRequestDto columnsCreateRequestDto) {
@@ -40,7 +40,7 @@ public class Columns {
     this.title = columnsUpdateNameRequestDto.getTitle();
   }
 
-  public void changePositionColumns(double position) {
+  public void changePositionColumns(Long position) {
     this.position = position;
   }
 }

@@ -60,7 +60,7 @@ public class ColumnsServiceImpl implements ColumnsService {
       }
       System.out.println(nowColumns.getPosition());
       System.out.println(targetColumns.getPosition());
-      double centerPosition = 0L;
+      Long centerPosition = 0L;
       if (nowColumns.getPosition() > targetColumns.getPosition()) {
         centerPosition = columnsRepository.getCenterColumnsPositionNowBig(nowColumns.getBoardId(),
             nowColumns.getPosition(), targetColumns.getPosition());
@@ -73,7 +73,7 @@ public class ColumnsServiceImpl implements ColumnsService {
       System.out.println(centerPosition);
       System.out.println(targetColumns.getPosition());
       if (nowColumns.getPosition() != centerPosition) {
-        double newPosition = (targetColumns.getPosition() + centerPosition) / 2;
+        Long newPosition = (targetColumns.getPosition() + centerPosition) / 2;
         nowColumns.changePositionColumns(newPosition);
       }
 

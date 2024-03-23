@@ -14,8 +14,8 @@ public class ColumnsRepositoryCustomImpl implements ColumnsRepositoryCustom {
 
 
   @Override
-  public double getCenterColumnsPositionTargetBig(Long boardId, double nowPosition,
-      double targetPosition) {
+  public Long getCenterColumnsPositionTargetBig(Long boardId, Long nowPosition,
+      Long targetPosition) {
     return jpaQueryFactory
         .select(columns.position)
         .from(columns)
@@ -27,7 +27,7 @@ public class ColumnsRepositoryCustomImpl implements ColumnsRepositoryCustom {
   }
 
   @Override
-  public double getCenterColumnsPositionNowBig(Long boardId, double nowPosition, double targetPosition) {
+  public Long getCenterColumnsPositionNowBig(Long boardId, Long nowPosition, Long targetPosition) {
     return jpaQueryFactory
         .select(columns.position)
         .from(columns)

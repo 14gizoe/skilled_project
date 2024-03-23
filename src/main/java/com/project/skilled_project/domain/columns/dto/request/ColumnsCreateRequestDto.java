@@ -7,6 +7,6 @@ public class ColumnsCreateRequestDto {
 
   private Long boardId;
   private String title;
-  private double position;
+  private Long position;
 
 }
