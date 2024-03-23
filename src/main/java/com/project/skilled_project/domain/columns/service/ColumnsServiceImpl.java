@@ -52,21 +52,19 @@ public class ColumnsServiceImpl implements ColumnsService {
   @Override
   public void changeNumberColumns(Long columnsId,
       ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto) {
-    System.out.println("시발");
-    System.out.println(columnsId);
-    System.out.println(columnsChangeNumberRequestDto.getColumnsId());
     // 현재 컬럼의 데이터
     Columns nowColumns = findColumns(columnsId);
     Columns targetColumns = findColumns(columnsChangeNumberRequestDto.getColumnsId());
     if (!Objects.equals(nowColumns.getBoardId(), targetColumns.getBoardId())) {
       throw new RuntimeException("두 컬럼의 보드가 다릅니다");
     }
-
     // 두 컬럼 사이에서 이동할 값 찾기
     Long centerColumnsPosition = getCenterColumnsPosition(nowColumns.getPosition(),
         targetColumns.getPosition(), nowColumns.getBoardId());
+
     long newColumnsPosition = (centerColumnsPosition + targetColumns.getPosition()) / 2;
     nowColumns.changePositionColumns(newColumnsPosition);
+
     if ((newColumnsPosition > targetColumns.getPosition() &&
         newColumnsPosition <= targetColumns.getPosition() + 100L) ||
         (newColumnsPosition < targetColumns.getPosition() &&
