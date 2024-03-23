@@ -1,14 +1,24 @@
 package com.project.skilled_project.domain.columns.service;
 
+import com.project.skilled_project.domain.card.dto.response.CardResponseDto;
+import com.project.skilled_project.domain.columns.dto.ColumnDto;
 import com.project.skilled_project.domain.columns.dto.request.ColumnsChangeNumberRequestDto;
 import com.project.skilled_project.domain.columns.dto.request.ColumnsCreateRequestDto;
 import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameRequestDto;
+import com.project.skilled_project.domain.columns.dto.response.ColumnResponseDto;
 import com.project.skilled_project.domain.columns.entity.Columns;
+import com.project.skilled_project.domain.columns.repository.ColumnQueryRepository;
 import com.project.skilled_project.domain.columns.repository.ColumnsRepository;
 import jakarta.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ColumnsServiceImpl implements ColumnsService {
 
   private final ColumnsRepository columnsRepository;
+  private final ColumnQueryRepository columnQueryRepository;
 
   // 컬럼 생성
   @Override
@@ -43,63 +54,79 @@ public class ColumnsServiceImpl implements ColumnsService {
   @Override
   public void changeNumberColumns(Long columnsId,
       ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto) {
-
-    // 기능
-    // 받아온 컬럼 id 2개로 현재 컬럼, 목표 컬럼값 받아오기.
+    // 현재 컬럼의 데이터
     Columns nowColumns = findColumns(columnsId);
     Columns targetColumns = findColumns(columnsChangeNumberRequestDto.getColumnsId());
-    // 받아온 두 컬럼이 보드가 다르면 던지기
     if (!Objects.equals(nowColumns.getBoardId(), targetColumns.getBoardId())) {
-      throw new RuntimeException("두 컬럼의 보드가 다르면 이동이 불가능 합니다.");
+      throw new IllegalArgumentException("두 컬럼의 보드가 다릅니다.");
     }
-    // 이동할 목표의 바로 직전 컬럼의 포지션 값을 받아옴
-    Long centerPosition = getCenterPosition(nowColumns.getPosition(), targetColumns.getPosition(),
-        nowColumns.getBoardId());
-    // 만약 해당 포지션값이 현재 포지션과 같으면
-    // 현상유지 이므로 같지 않을때만 작업 없으면 작업 종료
+    // 어느 보드에 있는지 알아야함.
+    // 수정하려는 컬럼과 같은 보드의 컬럼들을 불러와서 리스트로 만듬
+    Long who = nowColumns.getPosition();
+    Long where = targetColumns.getPosition();
+    List<Columns> columnsList = new ArrayList<>();
 
-    // 새로 들어갈 포지션 값을 만들어줌
-    long newPosition = (targetColumns.getPosition() + centerPosition) / 2;
-    // 새로운 포지션값 적용
-    nowColumns.changePositionColumns(newPosition);
-    // 만약 새로운 포지션 값 ~ 타겟 포지션값의 사이가 얼마 안남았으면
-    if ((newPosition < targetColumns.getPosition()
-        && newPosition + 100L > targetColumns.getPosition())
-        || (newPosition > targetColumns.getPosition()
-        && newPosition < targetColumns.getPosition() + 100L)) {
-      // 모든 컬럼들의 포지션값을 새로 잡아주자.
-      repositioning(nowColumns.getBoardId());
+    if (who < where) {
+      columnsList = columnsRepository.findAllByBoardIdOrderByPositionAsc(
+          nowColumns.getBoardId());
+    } else if (where < who) {
+      columnsList = columnsRepository.findAllByBoardIdOrderByPositionDesc(
+          nowColumns.getBoardId());
     }
+
+    Queue<Long> positionStack = new LinkedList<>();
+    int i = 0;
+    while (!Objects.equals(columnsList.get(i).getPosition(), who)) {
+      i++;
+    }
+    positionStack.add(columnsList.get(i).getPosition());
+    i++;
+    while (!Objects.equals(columnsList.get(i).getPosition(), where)) {
+      Columns columnsChange = columnsRepository.findByPosition(
+          columnsList.get(i).getPosition());
+      positionStack.add(columnsList.get(i).getPosition());
+      columnsChange.changePositionColumns(positionStack.poll());
+      i++;
+    }
+    Columns columnsChange = columnsRepository.findByPosition(
+        columnsList.get(i).getPosition());
+    positionStack.add(columnsList.get(i).getPosition());
+    columnsChange.changePositionColumns(positionStack.poll());
+    nowColumns.changePositionColumns(positionStack.poll());
+
   }
-
-
-  public void repositioning(Long boardId) {
-    // 먼저 해당 보드의 모든 값을 가져오자
-    // 해당 보드의 모든 컬럼값을 리스트로 가져오자
-    List<Columns> allColumns = columnsRepository.getAllColumns(boardId);
-    for (int i = 0; i < allColumns.size(); i++) {
-      allColumns.get(i).changePositionColumns((i + 1) * 1024L);
-    }
-  }
-
-  public Long getCenterPosition(Long nowPosition, Long targetPosition, Long boardId) {
-    if (nowPosition > targetPosition) {
-      return columnsRepository.getCenterColumnsPositionNowBig(boardId,
-          nowPosition, targetPosition);
-    } else {
-      return columnsRepository.getCenterColumnsPositionTargetBig(
-          boardId,
-          nowPosition, targetPosition);
-    }
-  }
-
   @Override
   public Columns findColumns(Long columnsId) {
-
     return columnsRepository.findById(columnsId).orElseThrow(
         () -> new EntityNotFoundException("컬럼 없음")
     );
   }
+
+  @Override
+  @Cacheable(value = "List<ColumnReponseDto>", key = "'all'", cacheManager = "cacheManager", unless = "#result == null")
+  public List<ColumnResponseDto> getColumns() {
+    List<ColumnDto> columnList = columnQueryRepository.getColumns();
+    Map<Long, List<CardResponseDto>> groupedDataMap = new HashMap<>();
+    for (ColumnDto columnDto : columnList) {
+      Long columnId = columnDto.getCards().getColumnId();
+      List<CardResponseDto> groupedDataList = groupedDataMap.getOrDefault(columnId,
+          new ArrayList<>());
+      groupedDataList.add(
+          new CardResponseDto(columnDto.getCards())
+      );
+      groupedDataMap.put(columnId, groupedDataList);
+    }
+
+    List<ColumnResponseDto> resultList = new ArrayList<>();
+    for (ColumnDto columnDto : columnList) {
+      resultList.add(new ColumnResponseDto(
+          columnDto.getColumns().getColumnsId(),
+          columnDto.getColumns().getBoardId(),
+          columnDto.getColumns().getTitle(),
+          columnDto.getColumns().getPosition(),
+          groupedDataMap.get(columnDto.getColumns().getColumnsId())
+      ));
+    }
+    return resultList;
+  }
 }
-
-
