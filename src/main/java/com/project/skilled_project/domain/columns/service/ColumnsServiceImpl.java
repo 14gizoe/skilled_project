@@ -12,11 +12,9 @@ import com.project.skilled_project.domain.columns.repository.ColumnsRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Queue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -54,47 +52,47 @@ public class ColumnsServiceImpl implements ColumnsService {
   @Override
   public void changeNumberColumns(Long columnsId,
       ColumnsChangeNumberRequestDto columnsChangeNumberRequestDto) {
+    System.out.println("시발");
+    System.out.println(columnsId);
+    System.out.println(columnsChangeNumberRequestDto.getColumnsId());
     // 현재 컬럼의 데이터
     Columns nowColumns = findColumns(columnsId);
     Columns targetColumns = findColumns(columnsChangeNumberRequestDto.getColumnsId());
     if (!Objects.equals(nowColumns.getBoardId(), targetColumns.getBoardId())) {
-      throw new IllegalArgumentException("두 컬럼의 보드가 다릅니다.");
-    }
-    // 어느 보드에 있는지 알아야함.
-    // 수정하려는 컬럼과 같은 보드의 컬럼들을 불러와서 리스트로 만듬
-    Long who = nowColumns.getPosition();
-    Long where = targetColumns.getPosition();
-    List<Columns> columnsList = new ArrayList<>();
-
-    if (who < where) {
-      columnsList = columnsRepository.findAllByBoardIdOrderByPositionAsc(
-          nowColumns.getBoardId());
-    } else if (where < who) {
-      columnsList = columnsRepository.findAllByBoardIdOrderByPositionDesc(
-          nowColumns.getBoardId());
+      throw new RuntimeException("두 컬럼의 보드가 다릅니다");
     }
 
-    Queue<Long> positionStack = new LinkedList<>();
-    int i = 0;
-    while (!Objects.equals(columnsList.get(i).getPosition(), who)) {
-      i++;
+    // 두 컬럼 사이에서 이동할 값 찾기
+    Long centerColumnsPosition = getCenterColumnsPosition(nowColumns.getPosition(),
+        targetColumns.getPosition(), nowColumns.getBoardId());
+    long newColumnsPosition = (centerColumnsPosition + targetColumns.getPosition()) / 2;
+    nowColumns.changePositionColumns(newColumnsPosition);
+    if ((newColumnsPosition > targetColumns.getPosition() &&
+        newColumnsPosition <= targetColumns.getPosition() + 100L) ||
+        (newColumnsPosition < targetColumns.getPosition() &&
+            newColumnsPosition + 100L >= targetColumns.getPosition())) {
+      rePosition(nowColumns.getBoardId());
     }
-    positionStack.add(columnsList.get(i).getPosition());
-    i++;
-    while (!Objects.equals(columnsList.get(i).getPosition(), where)) {
-      Columns columnsChange = columnsRepository.findByPosition(
-          columnsList.get(i).getPosition());
-      positionStack.add(columnsList.get(i).getPosition());
-      columnsChange.changePositionColumns(positionStack.poll());
-      i++;
-    }
-    Columns columnsChange = columnsRepository.findByPosition(
-        columnsList.get(i).getPosition());
-    positionStack.add(columnsList.get(i).getPosition());
-    columnsChange.changePositionColumns(positionStack.poll());
-    nowColumns.changePositionColumns(positionStack.poll());
-
   }
+
+  public void rePosition(Long boardID) {
+    List<Columns> columnsList = columnsRepository.getAllColumns(boardID);
+    for (int i = 0; i < columnsList.size(); i++) {
+      columnsList.get(i).changePositionColumns((i + 1) * 1024L);
+    }
+  }
+
+  public Long getCenterColumnsPosition(Long nowColumnsPosition, Long targetColumnsPosition,
+      Long boardId) {
+    if (nowColumnsPosition <= targetColumnsPosition) {
+      return columnsRepository.getCenterColumnsPositionTargetBig(boardId, nowColumnsPosition,
+          targetColumnsPosition);
+    } else {
+      return columnsRepository.getCenterColumnsPositionNowBig(boardId, nowColumnsPosition,
+          targetColumnsPosition);
+    }
+  }
+
   @Override
   public Columns findColumns(Long columnsId) {
     return columnsRepository.findById(columnsId).orElseThrow(
