@@ -2,7 +2,9 @@ package com.project.skilled_project.domain.columns.repository;
 
 import static com.project.skilled_project.domain.columns.entity.QColumns.columns;
 
+import com.project.skilled_project.domain.columns.entity.Columns;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -36,5 +38,14 @@ public class ColumnsRepositoryCustomImpl implements ColumnsRepositoryCustom {
         .where(columns.position.gt(targetPosition))
         .orderBy(columns.position.asc())
         .fetchFirst();
+  }
+  @Override
+  public List<Columns> getAllColumns(Long boardId){
+    return jpaQueryFactory
+        .select(columns)
+        .from(columns)
+        .where(columns.boardId.eq(boardId))
+        .orderBy(columns.position.asc())
+        .fetch();
   }
 }
