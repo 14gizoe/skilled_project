@@ -1,20 +1,21 @@
 version: '3.8'
 
 services:
-  spring:
-    image: skilled-project:yiyaaa
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    ports:
-      - "80:8080"
-    environment:
-      - SPRING_PROFILES_ACTIVE=dev
-      - SPRING_REDIS_HOST=redis
-    depends_on:
-      - redis
-
   redis:
     image: redis
     ports:
       - "6379:6379"
+
+  spring:
+    image: skilled-project:yiyaaa
+    container_name: skilled_project
+    ports:
+      - "80:8080"
+    depends_on:
+      - redis
+    networks:
+      - skilled-project-net
+
+networks:
+  skilled-project-net:
+    external: true
