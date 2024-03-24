@@ -46,7 +46,7 @@ jobs:
 
       # 6. docker deploy to ec2
       - name: Docker deploy to ec2
-        uses: appleboy/ssh-acation@master
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ubuntu
