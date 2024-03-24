@@ -53,7 +53,7 @@ public class BoardServiceImpl implements BoardService {
 //    for (BoardsDto boardsDto : boardsList) {
 //      boardsResponseDto.boardTitleUpdate(boardsDto.getTitle());
 //    }
-    List<String> boardList = redisTemplate.opsForList().range("boardTitles",0,-1);
+    List<String> boardList = redisTemplate.opsForList().range("boardTitles", 0, -1);
     return new BoardsResponseDto(boardList);
   }
 
@@ -80,7 +80,8 @@ public class BoardServiceImpl implements BoardService {
 
   @Override
   public Board findBoard(Long boardId) {
-    return boardRepository.findById(boardId).orElseThrow(() -> new NullPointerException("보드가 존재하지 않음"));
+    return boardRepository.findById(boardId)
+        .orElseThrow(() -> new NullPointerException("보드가 존재하지 않음"));
   }
 
   private List<ColumnDto> mapppingBoard(List<BoardResponseDto> boardList) {

@@ -8,15 +8,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Columns {
 
   @Id
@@ -34,7 +33,7 @@ public class Columns {
   public Columns(ColumnsCreateRequestDto columnsCreateRequestDto) {
     this.boardId = columnsCreateRequestDto.getBoardId();
     this.title = columnsCreateRequestDto.getTitle();
-    this.position = columnsCreateRequestDto.getPosition();
+    this.position = (columnsCreateRequestDto.getPosition()*1024);
   }
 
   public void updateNameColumns(ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto) {
