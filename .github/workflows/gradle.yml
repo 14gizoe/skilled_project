@@ -41,7 +41,7 @@ jobs:
       - name: docker build & push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}//yiyaaa .
+          docker build -t ${{ secrets.DOCKER_REPO }}/yiyaaa .
           docker push ${{ secrets.DOCKER_REPO }}/yiyaaa
 
       # 6. docker deploy to ec2
