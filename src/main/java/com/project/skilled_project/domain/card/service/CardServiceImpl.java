@@ -53,7 +53,7 @@ public class CardServiceImpl implements CardService{
     ops.set(cardId + "", "0");
   }
 
-  @Scheduled(fixedDelay = 1000 * 60 * 60)
+  @Scheduled(fixedDelay = 1000 * 60 * 60 * 24)
   @Transactional
   public void processTasks() {
     List<Card> cardList = cardRepository.findAll();
