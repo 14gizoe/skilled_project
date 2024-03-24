@@ -41,8 +41,8 @@ jobs:
       - name: docker build & push
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t ${{ secrets.DOCKER_REPO }}/skilled_project .
-          docker push ${{ secrets.DOCKER_REPO }}/skilled_project
+          docker build -t ${{ secrets.DOCKER_REPO }}/skilled_project:1.0 .
+          docker push ${{ secrets.DOCKER_REPO }}/skilled_project:1.0
 
       # 6. docker deploy to ec2
       - name: Docker deploy to ec2
@@ -54,7 +54,7 @@ jobs:
           port: 22
           script: |
             sudo docker rm -f $(docker ps -aq)
-            sudo docker pull ${{ secrets.DOCKER_REPO }}/skilled_project
+            sudo docker pull ${{ secrets.DOCKER_REPO }}/skilled_project:1.0
             docker-compose up -d
             sudo docker 
             sudo docker image prune -f
