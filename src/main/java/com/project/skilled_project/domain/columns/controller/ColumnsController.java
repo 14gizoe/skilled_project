@@ -5,6 +5,7 @@ import com.project.skilled_project.domain.columns.dto.request.ColumnsCreateReque
 import com.project.skilled_project.domain.columns.dto.request.ColumnsUpdateNameRequestDto;
 import com.project.skilled_project.domain.columns.dto.response.ColumnResponseDto;
 import com.project.skilled_project.domain.columns.service.ColumnsService;
+import com.project.skilled_project.global.annotation.WithDistributedLock;
 import com.project.skilled_project.global.response.CommonResponse;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class ColumnsController {
 
   // 컬럼 이름 수정 /api/columns/{columnId}
   @PutMapping("/{columnsId}")
+  @WithDistributedLock(lockName = "#columnsId")
   public void updateNameColumns(
       @PathVariable Long columnsId,
       @RequestBody ColumnsUpdateNameRequestDto columnsUpdateNameRequestDto
